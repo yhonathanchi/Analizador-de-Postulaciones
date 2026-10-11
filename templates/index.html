@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Analizador de Postulaciones Laborales</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body>
+    <header>
+      <h1>Analizador Léxico y Sintáctico</h1>
+      <p>Sistema de validación estructural de postulaciones laborales</p>
+    </header>
+
+    <main>
+      <!-- A. CASO -->
+      <section class="panel">
+        <h2>A. Caso</h2>
+
+        <p>
+          Esta plataforma permite analizar la estructura de postulaciones
+          laborales mediante técnicas de análisis léxico y sintáctico.
+        </p>
+
+        <h3>Ingreso de archivo</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+          <input type="file" name="archivo" accept=".txt" required />
+
+          <button type="submit">Analizar postulación</button>
+        </form>
+      </section>
+
+      <!-- B. RESULTADO -->
+      <section class="panel">
+        <h2>B. Resultado</h2>
+
+        {% if errores %}
+
+        <p class="resultado-error">Se encontraron errores:</p>
+
+        <ul>
+          {% for error in errores %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+
+        {% elif analizado %}
+
+        <p class="resultado-ok">Análisis léxico completado sin errores.</p>
+
+        <p>Archivo: {{ nombre_archivo }}</p>
+
+        {% else %}
+
+        <p>Selecciona un archivo para comenzar el análisis.</p>
+
+        {% endif %} {% if analizado %}
+        <p class="aviso">
+          Este resultado corresponde únicamente al análisis léxico. La
+          validación sintáctica se incorporará en la siguiente etapa.
+        </p>
+        {% endif %}
+      </section>
+
+      <!-- 3.1 ANÁLISIS LÉXICO -->
+      <section class="panel">
+        <link rel="stylesheet" href="/style.css" />
+
+        <p>
+          El analizador identifica tokens y lexemas mediante expresiones
+          regulares.
+        </p>
+        <!-- TABLA DE EXPRESIONES REGULARES -->
+
+        <h3>Reglas y expresiones regulares</h3>
+
+        <p>
+          Las expresiones regulares permiten reconocer los valores de los campos
+          de una postulación laboral.
+        </p>
+
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Expresión regular</th>
+                <th>Ejemplo válido</th>
+                <th>Descripción</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>DNI</td>
+                <td><code>[0-9]{8}</code></td>
+                <td>12345678</td>
+                <td>Exactamente ocho dígitos</td>
+              </tr>
+
+              <tr>
+                <td>CORREO</td>
+                <td>
+                  <code>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}</code>
+                </td>
+                <td>juan@gmail.com</td>
+                <td>Correo con formato básico válido</td>
+              </tr>
+
+              <tr>
+                <td>NOMBRE</td>
+                <td>
+                  <code>[A-Za-zÁÉÍÓÚáéíóúÑñÜü ]+</code>
+                </td>
+                <td>Juan Perez</td>
+                <td>Letras y espacios</td>
+              </tr>
+
+              <tr>
+                <td>INSTITUCION</td>
+                <td>
+                  <code>[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9 .,-]+</code>
+                </td>
+                <td>Universidad de Lima</td>
+                <td>Letras, números y algunos signos</td>
+              </tr>
+
+              <tr>
+                <td>PUESTO</td>
+                <td>
+                  <code>[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9 .,-]+</code>
+                </td>
+                <td>Asistente administrativo</td>
+                <td>Nombre del puesto laboral</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {% if analizado %}
+
+        <h3>Tabla de tokens reconocidos</h3>
+
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>N.º</th>
+                <th>Token</th>
+                <th>Lexema</th>
+                <th>Línea</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for token in tokens %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ token.token }}</td>
+                <td>{{ token.lexema }}</td>
+                <td>{{ token.linea }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% else %}
+
+        <p>Los tokens aparecerán después de cargar un archivo.</p>
+
+        {% endif %}
+      </section>
+
+      <!-- 3.2 ANÁLISIS SINTÁCTICO -->
+      <section class="panel">
+        <h2>3.2 Análisis sintáctico</h2>
+
+        <p>
+          Próximamente implementaremos las reglas de producción, la gramática
+          libre de contexto y el árbol sintáctico.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

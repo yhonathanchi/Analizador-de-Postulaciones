@@ -1,0 +1,13 @@
+DATOS_PERSONALES {
+NOMBRE: Juan Perez
+DNI: 12345678
+CORREO: juan@gmail.com
+}
+
+EDUCACION {
+INSTITUCION: Universidad de Lima
+}
+
+EXPERIENCIA {
+PUESTO: Asistente administrativo
+}
