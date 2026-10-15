@@ -3,13 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Analizador de Postulaciones Laborales</title>
-
-    <!-- CSS para Flask y Vercel -->
     <link rel="stylesheet" href="/style.css" />
   </head>
-
   <body>
     <header>
       <h1>Analizador Léxico y Sintáctico</h1>
@@ -17,11 +13,11 @@
     </header>
 
     <main>
-      <!-- A. CASO -->
       <section class="panel">
         <h2>A. Caso</h2>
 
         <h3>Enunciado del proyecto</h3>
+
         <p>
           Las agencias de selección reciben postulaciones laborales que pueden
           presentar errores de formato, campos incorrectos o información
@@ -33,29 +29,19 @@
           formal para postulaciones laborales mediante tokens, lexemas y
           expresiones regulares.
         </p>
+
         <h3>Ingreso de datos</h3>
 
         <p>Selecciona una forma de introducir la postulación:</p>
 
         <div class="opciones-ingreso">
           <label>
-            <input
-              type="radio"
-              name="modo_visual"
-              value="archivo"
-              checked
-              onclick="cambiarModo('archivo')"
-            />
+            <input type="radio" name="modo_visual" value="archivo" checked />
             Cargar archivo .txt
           </label>
 
           <label>
-            <input
-              type="radio"
-              name="modo_visual"
-              value="texto"
-              onclick="cambiarModo('texto')"
-            />
+            <input type="radio" name="modo_visual" value="texto" />
             Escribir texto
           </label>
         </div>
@@ -63,7 +49,6 @@
         <form method="POST" enctype="multipart/form-data">
           <input type="hidden" name="modo" id="modo" value="archivo" />
 
-          <!-- OPCIÓN 1: ARCHIVO -->
           <div id="panel-archivo">
             <h3>Seleccionar archivo</h3>
 
@@ -75,7 +60,6 @@
             </p>
           </div>
 
-          <!-- OPCIÓN 2: TEXTO -->
           <div id="panel-texto" hidden>
             <h3>Escribir una postulación</h3>
 
@@ -84,13 +68,13 @@
               name="contenido"
               rows="13"
               spellcheck="false"
-              placeholder="Escribe aquí la postulación..."
+              placeholder="Escribe aquí tu postulación..."
             >
 {{ contenido_ingresado | default('', true) }}</textarea
             >
 
             <p class="aviso">
-              Puedes utilizar el ejemplo del lenguaje mostrado abajo.
+              Escribe los datos utilizando el formato del ejemplo.
             </p>
           </div>
 
@@ -116,51 +100,45 @@ PUESTO: Asistente administrativo
         >
 
         <p class="aviso">
-          El lenguaje del proyecto utiliza las secciones DATOS_PERSONALES,
-          EDUCACION y EXPERIENCIA. Este ejemplo es una entrada de prueba y no un
-          CV completo.
+          El lenguaje utiliza las secciones DATOS_PERSONALES, EDUCACION y
+          EXPERIENCIA. Este es un ejemplo de entrada y no un currículum
+          completo.
         </p>
       </section>
 
-      <!-- B. RESULTADO -->
       <section class="panel">
         <h2>B. Resultado</h2>
 
         {% if errores %}
-        <p class="resultado-error">
-          Se encontraron errores léxicos o de entrada:
-        </p>
+        <p class="resultado-error">Se encontraron errores:</p>
 
         <ul>
           {% for error in errores %}
           <li>{{ error }}</li>
           {% endfor %}
         </ul>
-
         {% elif analizado %}
         <p class="resultado-ok">Análisis léxico completado sin errores.</p>
 
         <p>Origen: {{ nombre_archivo }}</p>
-
         {% else %}
         <p>
           Carga un archivo o escribe una postulación para comenzar el análisis.
         </p>
         {% endif %} {% if analizado %}
         <p class="aviso">
-          Este resultado corresponde únicamente al análisis léxico. Todavía no
-          significa que la postulación tenga una estructura sintáctica válida.
+          Los resultados corresponden al análisis léxico. La validación
+          sintáctica se realizará en el módulo 3.2.
         </p>
         {% endif %}
       </section>
 
-      <!-- 3.1 ANÁLISIS LÉXICO -->
       <section class="panel">
         <h2>3.1 Análisis léxico</h2>
 
         <p>
           El analizador identifica lexemas y los clasifica en tokens mediante
-          reglas y expresiones regulares.
+          expresiones regulares.
         </p>
 
         <h3>Reglas y expresiones regulares</h3>
@@ -190,7 +168,7 @@ PUESTO: Asistente administrativo
                   <code>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}</code>
                 </td>
                 <td>juan@gmail.com</td>
-                <td>Formato básico de correo</td>
+                <td>Formato básico de correo electrónico</td>
               </tr>
 
               <tr>
@@ -217,7 +195,7 @@ PUESTO: Asistente administrativo
                   <code>[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9 .,-]+</code>
                 </td>
                 <td>Asistente administrativo</td>
-                <td>Descripción del puesto</td>
+                <td>Descripción del puesto laboral</td>
               </tr>
             </tbody>
           </table>
@@ -259,21 +237,16 @@ PUESTO: Asistente administrativo
         {% endif %}
       </section>
 
-      <!-- 3.2 ANÁLISIS SINTÁCTICO -->
       <section class="panel">
         <h2>3.2 Análisis sintáctico</h2>
 
         <p>
-          Esta etapa incorporará la gramática libre de contexto, las reglas de
-          producción, la validación del orden de las secciones y el árbol
-          sintáctico.
+          En esta sección se incorporarán las reglas de producción, la gramática
+          libre de contexto, la validación estructural y el árbol sintáctico.
         </p>
-
-        <p class="aviso">Módulo pendiente de implementación.</p>
       </section>
     </main>
 
-    <!-- CONTROL DE LAS DOS FORMAS DE INGRESO -->
     <script>
       function cambiarModo(modo) {
           const panelArchivo = document.getElementById("panel-archivo");
@@ -281,24 +254,28 @@ PUESTO: Asistente administrativo
           const campoModo = document.getElementById("modo");
 
           campoModo.value = modo;
-
           panelArchivo.hidden = modo !== "archivo";
           panelTexto.hidden = modo !== "texto";
       }
 
-      // Mantener seleccionada la modalidad después del análisis
-      document.addEventListener("DOMContentLoaded", function() {
+      document.addEventListener("DOMContentLoaded", function () {
           const modoInicial = {{ modo_actual | default('archivo') | tojson }};
 
-          cambiarModo(modoInicial);
-
-          const opcion = document.querySelector(
-              'input[name="modo_visual"][value="' + modoInicial + '"]'
+          const opciones = document.querySelectorAll(
+              'input[name="modo_visual"]'
           );
 
-        <h3>Ingreso de datos</h3>  if (opcion) {
-              opcion.checked = true;
-          }
+          opciones.forEach(function (opcion) {
+              opcion.checked = opcion.value === modoInicial;
+
+              opcion.addEventListener("change", function () {
+                  if (opcion.checked) {
+                      cambiarModo(opcion.value);
+                  }
+              });
+          });
+
+          cambiarModo(modoInicial);
       });
     </script>
   </body>

@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Tamaño máximo de solicitud: 1 MB
 app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
-
+app = Flask(__name__)
 
 # Archivo CSS
 @app.route("/style.css")

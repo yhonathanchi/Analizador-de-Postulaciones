@@ -158,3 +158,45 @@ textarea {
 [hidden] {
   display: none !important;
 }
+
+[hidden] {
+  display: none !important;
+}
+
+.opciones-ingreso {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.opciones-ingreso label {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#panel-texto textarea {
+  display: block;
+  width: 100%;
+  min-height: 250px;
+  box-sizing: border-box;
+  padding: 15px;
+  margin: 10px 0 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.ejemplo-lenguaje {
+  background-color: #f1f5f9;
+  border-left: 4px solid #22a06b;
+  border-radius: 6px;
+  padding: 18px;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
