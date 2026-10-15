@@ -1,6 +1,5 @@
 import re
 
-# Palabras reservadas de nuestro lenguaje
 SECCIONES = {
     "DATOS_PERSONALES",
     "EDUCACION",
@@ -15,7 +14,6 @@ CAMPOS = {
     "PUESTO"
 }
 
-# Expresiones regulares para los valores
 PATRONES = {
     "DNI": r"[0-9]{8}",
     "CORREO": r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
@@ -29,7 +27,6 @@ def analizar_lexico(contenido):
     tokens = []
     errores = []
 
-    # Leemos el archivo línea por línea
     for numero_linea, linea in enumerate(
         contenido.splitlines(), start=1
     ):
@@ -38,7 +35,6 @@ def analizar_lexico(contenido):
         if not linea:
             continue
 
-        # Reconocer encabezados de sección
         if linea in SECCIONES:
             tokens.append({
                 "token": "TK_SECCION",
@@ -47,7 +43,6 @@ def analizar_lexico(contenido):
             })
             continue
 
-        # Reconocer llaves
         if linea in ("{", "}"):
             tokens.append({
                 "token": "TK_ABRE" if linea == "{" else "TK_CIERRA",
@@ -56,7 +51,6 @@ def analizar_lexico(contenido):
             })
             continue
 
-        # Reconocer encabezado seguido de llave
         if linea.endswith("{") and linea[:-1].strip() in SECCIONES:
             seccion = linea[:-1].strip()
 
@@ -73,7 +67,6 @@ def analizar_lexico(contenido):
             })
             continue
 
-        # Reconocer campos y valores
         if ":" in linea:
             campo, valor = linea.split(":", 1)
             campo = campo.strip()
@@ -116,7 +109,6 @@ def analizar_lexico(contenido):
             })
             continue
 
-        # Si no se reconoce la línea
         errores.append(
             f"Línea {numero_linea}: contenido no reconocido '{linea}'"
         )

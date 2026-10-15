@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="926" height="270" viewBox="0 0 926 270">
+<defs><marker id="flecha" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#2563eb"/></marker></defs>
+<rect width="100%" height="100%" fill="white"/>
+<text x="463.0" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#17365d">AFD del CORREO</text>
+<path d="M20,143 L58,143" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#flecha)"/>
+<path d="M109,143 L166,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="139.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">67 símbolos</text>
+<path d="M109,143 L274,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="193.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">@</text>
+<path d="M177,123 C133,38 253,38 209,123" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="193" y="51" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">67 símbolos</text>
+<path d="M217,143 L382,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="301.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">@</text>
+<path d="M285,123 C241,38 361,38 317,123" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="301" y="51" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">Σ</text>
+<path d="M409,167 Q355.0,238 301,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="355.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">%, +, @, _</text>
+<path d="M433,143 L490,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="463.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">64 símbolos</text>
+<path d="M517,167 Q409.0,238 301,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="409.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">%, +, @, _</text>
+<path d="M501,123 C457,38 577,38 533,123" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="517" y="51" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">63 símbolos</text>
+<path d="M541,143 L598,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="571.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">.</text>
+<path d="M625,167 Q463.0,238 301,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="463.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">%, +, @, _</text>
+<path d="M625,167 Q571.0,238 517,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="571.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">11 símbolos</text>
+<path d="M609,123 C565,38 685,38 641,123" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="625" y="51" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">.</text>
+<path d="M649,143 L706,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="679.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">52 símbolos</text>
+<path d="M733,167 Q517.0,238 301,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="517.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">%, +, @, _</text>
+<path d="M733,167 Q625.0,238 517,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="625.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">11 símbolos</text>
+<path d="M733,167 Q679.0,238 625,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="679.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">.</text>
+<path d="M757,143 L814,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="787.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">52 símbolos</text>
+<path d="M841,167 Q571.0,238 301,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="571.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">%, +, @, _</text>
+<path d="M841,167 Q679.0,238 517,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="679.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">11 símbolos</text>
+<path d="M841,167 Q733.0,238 625,167" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="733.0" y="216" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">.</text>
+<path d="M825,123 C781,38 901,38 857,123" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="841" y="51" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">52 símbolos</text>
+<circle cx="85" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="85" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q0</text>
+<circle cx="193" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="193" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q1</text>
+<circle cx="301" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="301" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q2</text>
+<circle cx="409" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="409" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q3</text>
+<circle cx="517" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="517" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q4</text>
+<circle cx="625" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="625" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q5</text>
+<circle cx="733" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="733" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q6</text>
+<circle cx="841" cy="143" r="24" fill="#dcfce7" stroke="#15803d" stroke-width="2"></circle>
+<circle cx="841" cy="143" r="19" fill="none" stroke="#15803d" stroke-width="2"></circle>
+<text x="841" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q7</text>
+<text x="463.0" y="250" text-anchor="middle" font-family="Arial" font-size="12" fill="#64748b">Los estados con doble círculo son estados de aceptación.</text>
+</svg>

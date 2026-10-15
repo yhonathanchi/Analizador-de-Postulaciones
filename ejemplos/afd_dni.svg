@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1142" height="270" viewBox="0 0 1142 270">
+<defs><marker id="flecha" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#2563eb"/></marker></defs>
+<rect width="100%" height="100%" fill="white"/>
+<text x="571.0" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#17365d">AFD del DNI</text>
+<path d="M20,143 L58,143" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#flecha)"/>
+<path d="M109,143 L166,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="139.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M217,143 L274,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="247.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M325,143 L382,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="355.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M433,143 L490,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="463.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M541,143 L598,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="571.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M649,143 L706,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="679.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M757,143 L814,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="787.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M865,143 L922,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="895.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M973,143 L1030,143" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="1003.0" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<path d="M1041,123 C997,38 1117,38 1073,123" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#flecha)"/>
+<text x="1057" y="51" text-anchor="middle" font-family="Arial" font-size="12" fill="#17365d">0-9</text>
+<circle cx="85" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="85" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q0</text>
+<circle cx="193" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="193" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q1</text>
+<circle cx="301" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="301" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q2</text>
+<circle cx="409" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="409" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q3</text>
+<circle cx="517" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="517" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q4</text>
+<circle cx="625" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="625" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q5</text>
+<circle cx="733" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="733" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q6</text>
+<circle cx="841" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="841" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q7</text>
+<circle cx="949" cy="143" r="24" fill="#dcfce7" stroke="#15803d" stroke-width="2"></circle>
+<circle cx="949" cy="143" r="19" fill="none" stroke="#15803d" stroke-width="2"></circle>
+<text x="949" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q8</text>
+<circle cx="1057" cy="143" r="24" fill="#eff6ff" stroke="#17365d" stroke-width="2"></circle>
+<text x="1057" y="148" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#17365d">q9</text>
+<text x="571.0" y="250" text-anchor="middle" font-family="Arial" font-size="12" fill="#64748b">Los estados con doble círculo son estados de aceptación.</text>
+</svg>

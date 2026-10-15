@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Analizador de Postulaciones Laborales</title>
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="{{ url_for('estilos') }}" />
   </head>
   <body>
     <header>
@@ -48,6 +48,8 @@
 
         <form method="POST" enctype="multipart/form-data">
           <input type="hidden" name="modo" id="modo" value="archivo" />
+
+          <input type="hidden" name="campo" value="{{ campo_actual }}" />
 
           <div id="panel-archivo">
             <h3>Seleccionar archivo</h3>
@@ -117,18 +119,19 @@ PUESTO: Asistente administrativo
           <li>{{ error }}</li>
           {% endfor %}
         </ul>
+
         {% elif analizado %}
         <p class="resultado-ok">Análisis léxico completado sin errores.</p>
-
         <p>Origen: {{ nombre_archivo }}</p>
+
         {% else %}
         <p>
           Carga un archivo o escribe una postulación para comenzar el análisis.
         </p>
         {% endif %} {% if analizado %}
         <p class="aviso">
-          Los resultados corresponden al análisis léxico. La validación
-          sintáctica se realizará en el módulo 3.2.
+          Este resultado corresponde al análisis léxico. No representa todavía
+          una validación sintáctica.
         </p>
         {% endif %}
       </section>
@@ -153,7 +156,6 @@ PUESTO: Asistente administrativo
                 <th>Descripción</th>
               </tr>
             </thead>
-
             <tbody>
               <tr>
                 <td>DNI</td>
@@ -161,7 +163,6 @@ PUESTO: Asistente administrativo
                 <td>12345678</td>
                 <td>Exactamente ocho dígitos</td>
               </tr>
-
               <tr>
                 <td>CORREO</td>
                 <td>
@@ -170,7 +171,6 @@ PUESTO: Asistente administrativo
                 <td>juan@gmail.com</td>
                 <td>Formato básico de correo electrónico</td>
               </tr>
-
               <tr>
                 <td>NOMBRE</td>
                 <td>
@@ -179,7 +179,6 @@ PUESTO: Asistente administrativo
                 <td>Juan Perez</td>
                 <td>Letras y espacios</td>
               </tr>
-
               <tr>
                 <td>INSTITUCION</td>
                 <td>
@@ -188,7 +187,6 @@ PUESTO: Asistente administrativo
                 <td>Universidad de Lima</td>
                 <td>Letras, números y signos permitidos</td>
               </tr>
-
               <tr>
                 <td>PUESTO</td>
                 <td>
@@ -215,7 +213,6 @@ PUESTO: Asistente administrativo
                 <th>Línea</th>
               </tr>
             </thead>
-
             <tbody>
               {% for token in tokens %}
               <tr>
@@ -235,6 +232,192 @@ PUESTO: Asistente administrativo
           Los tokens y lexemas aparecerán después de analizar una postulación.
         </p>
         {% endif %}
+
+        <h3>Autómatas finitos</h3>
+
+        <p>
+          Selecciona un campo para consultar su expresión regular, AFND, AFD,
+          quíntuplas y tablas de transiciones.
+        </p>
+
+        <form method="GET" action="/" class="form-selector">
+          <label for="campo">Campo:</label>
+
+          <select id="campo" name="campo" onchange="this.form.submit()">
+            {% for opcion in campos_disponibles %} {% if opcion == campo_actual
+            %}
+            <option value="{{ opcion }}" selected>{{ opcion }}</option>
+            {% else %}
+            <option value="{{ opcion }}">{{ opcion }}</option>
+            {% endif %} {% endfor %}
+          </select>
+
+          <noscript>
+            <button type="submit">Mostrar autómatas</button>
+          </noscript>
+        </form>
+
+        <h3>Expresión regular de {{ campo_actual }}</h3>
+
+        <p class="expresion-dinamica">
+          <code>{{ expresion_actual }}</code>
+        </p>
+
+        <h3>Autómata Finito No Determinista (AFND)</h3>
+
+        <p>
+          El AFND reconoce las cadenas que cumplen la expresión regular del
+          campo {{ campo_actual }}.
+        </p>
+
+        <div class="tabla-contenedor grafico-contenedor">
+          <img
+            src="{{ url_for('mostrar_automata', campo=campo_actual, tipo='afnd') }}"
+            alt="AFND de {{ campo_actual }}"
+            class="grafico-automata"
+          />
+        </div>
+
+        <h3>Quíntupla del AFND</h3>
+
+        <p>M = (Q, Σ, δ, q₀, F)</p>
+
+        <div class="tabla-contenedor">
+          <table class="tabla-quintupla">
+            <thead>
+              <tr>
+                <th>Componente</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Q - Estados</td>
+                <td>{{ quintupla_afnd.estados }}</td>
+              </tr>
+              <tr>
+                <td>Σ - Alfabeto</td>
+                <td>{{ quintupla_afnd.alfabeto }}</td>
+              </tr>
+              <tr>
+                <td>δ - Transiciones</td>
+                <td>Definidas en la tabla siguiente</td>
+              </tr>
+              <tr>
+                <td>q₀ - Estado inicial</td>
+                <td>{{ quintupla_afnd.inicial }}</td>
+              </tr>
+              <tr>
+                <td>F - Estados finales</td>
+                <td>{{ quintupla_afnd.finales }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Tabla de transiciones del AFND</h3>
+
+        <div class="tabla-contenedor">
+          <table class="tabla-transiciones">
+            <thead>
+              <tr>
+                <th>Estado origen</th>
+                <th>Símbolos</th>
+                <th>Estado destino</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for fila in tabla_afnd %}
+              <tr>
+                <td>{{ fila.origen }}</td>
+                <td>{{ fila.simbolos }}</td>
+                <td>{{ fila.destino }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Autómata Finito Determinista (AFD)</h3>
+
+        <p>
+          El AFD se obtiene mediante la construcción por subconjuntos aplicada
+          al AFND.
+        </p>
+
+        <div class="tabla-contenedor grafico-contenedor">
+          <img
+            src="{{ url_for('mostrar_automata', campo=campo_actual, tipo='afd') }}"
+            alt="AFD de {{ campo_actual }}"
+            class="grafico-automata"
+          />
+        </div>
+
+        <h3>Quíntupla del AFD</h3>
+
+        <p>M = (Q, Σ, δ, q₀, F)</p>
+
+        <div class="tabla-contenedor">
+          <table class="tabla-quintupla">
+            <thead>
+              <tr>
+                <th>Componente</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Q - Estados</td>
+                <td>{{ quintupla_afd.estados }}</td>
+              </tr>
+              <tr>
+                <td>Σ - Alfabeto</td>
+                <td>{{ quintupla_afd.alfabeto }}</td>
+              </tr>
+              <tr>
+                <td>δ - Transiciones</td>
+                <td>Definidas en la tabla siguiente</td>
+              </tr>
+              <tr>
+                <td>q₀ - Estado inicial</td>
+                <td>{{ quintupla_afd.inicial }}</td>
+              </tr>
+              <tr>
+                <td>F - Estados finales</td>
+                <td>{{ quintupla_afd.finales }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Tabla de transiciones del AFD</h3>
+
+        <div class="tabla-contenedor">
+          <table class="tabla-transiciones">
+            <thead>
+              <tr>
+                <th>Estado origen</th>
+                <th>Símbolos</th>
+                <th>Estado destino</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for fila in tabla_afd %}
+              <tr>
+                <td>{{ fila.origen }}</td>
+                <td>{{ fila.simbolos }}</td>
+                <td>{{ fila.destino }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <p class="aviso">
+          Σ representa todos los símbolos del alfabeto indicado en la quíntupla.
+          ε representa una transición sin consumir caracteres. Las transiciones
+          se agrupan por destino. Los símbolos no definidos se rechazan.
+        </p>
       </section>
 
       <section class="panel">
