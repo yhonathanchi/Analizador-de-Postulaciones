@@ -1,20 +1,20 @@
-# Importamos las herramientas necesarias de Flask
 from flask import Flask, render_template, request, send_from_directory
-
-# Importamos nuestro analizador léxico
 from analizadores.lexico import analizar_lexico
 
-# Creamos la aplicación Flask
+# Inicializamos Flask
 app = Flask(__name__)
 
+# Tamaño máximo de solicitud: 1 MB
+app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
 
-# Ruta para mostrar el archivo CSS
+
+# Archivo CSS
 @app.route("/style.css")
 def estilos():
     return send_from_directory("public", "style.css")
 
 
-# Ruta principal de nuestra plataforma
+# Página principal
 @app.route("/", methods=["GET", "POST"])
 def inicio():
 
@@ -22,46 +22,72 @@ def inicio():
     errores = []
     analizado = False
     nombre_archivo = ""
+    contenido_ingresado = ""
+    modo_actual = "archivo"
 
-    # Cuando el usuario presiona Analizar postulación
     if request.method == "POST":
 
-        archivo = request.files.get("archivo")
+        modo_actual = request.form.get("modo", "archivo")
 
-        # Verificamos que haya seleccionado un archivo
-        if archivo is None or archivo.filename == "":
-            errores.append("Debes seleccionar un archivo .txt.")
+        contenido = None
 
-        # Verificamos la extensión
-        elif not archivo.filename.lower().endswith(".txt"):
-            errores.append("Solo se permiten archivos .txt.")
+        # OPCIÓN 1: ANALIZAR ARCHIVO .TXT
+        if modo_actual == "archivo":
+
+            archivo = request.files.get("archivo")
+
+            if archivo is None or archivo.filename == "":
+                errores.append("Debes seleccionar un archivo .txt.")
+
+            elif not archivo.filename.lower().endswith(".txt"):
+                errores.append("Solo se permiten archivos .txt.")
+
+            else:
+                try:
+                    contenido = archivo.read().decode("utf-8-sig")
+                    nombre_archivo = archivo.filename
+
+                except UnicodeDecodeError:
+                    errores.append(
+                        "El archivo debe estar guardado en formato UTF-8."
+                    )
+
+        # OPCIÓN 2: ANALIZAR TEXTO DIGITADO
+        elif modo_actual == "texto":
+
+            contenido_ingresado = request.form.get("contenido", "")
+            contenido = contenido_ingresado
+
+            if not contenido.strip():
+                errores.append("Debes escribir una postulación.")
+
+            else:
+                nombre_archivo = "Texto ingresado manualmente"
 
         else:
-            try:
-                # Leemos el archivo sin guardarlo permanentemente
-                contenido = archivo.read().decode("utf-8-sig")
+            errores.append("Modalidad de ingreso no válida.")
+            modo_actual = "archivo"
 
-                # Ejecutamos el analizador léxico
-                tokens, errores = analizar_lexico(contenido)
+        # Ejecutamos el analizador léxico
+        if not errores and contenido is not None:
 
-                analizado = True
-                nombre_archivo = archivo.filename
+            tokens, errores_lexicos = analizar_lexico(contenido)
 
-            except UnicodeDecodeError:
-                errores.append(
-                    "El archivo debe estar guardado en formato UTF-8."
-                )
+            errores.extend(errores_lexicos)
 
-    # Enviamos los resultados a nuestra página HTML
+            analizado = True
+
     return render_template(
         "index.html",
         tokens=tokens,
         errores=errores,
         analizado=analizado,
-        nombre_archivo=nombre_archivo
+        nombre_archivo=nombre_archivo,
+        contenido_ingresado=contenido_ingresado,
+        modo_actual=modo_actual
     )
 
 
-# Ejecutamos Flask en nuestra computadora
+# Ejecución local
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

@@ -1,4 +1,3 @@
-/* Configuración general */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -6,7 +5,6 @@ body {
   color: #1e293b;
 }
 
-/* Encabezado */
 header {
   background-color: #17365d;
   color: white;
@@ -14,14 +12,12 @@ header {
   padding: 30px 15px;
 }
 
-/* Contenedor principal */
 main {
   max-width: 1100px;
   margin: 30px auto;
   padding: 0 20px;
 }
 
-/* Paneles de contenido */
 .panel {
   background-color: white;
   padding: 25px;
@@ -30,20 +26,17 @@ main {
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Títulos de cada sección */
 h2 {
   color: #17365d;
   border-bottom: 2px solid #22a06b;
   padding-bottom: 10px;
 }
 
-/* Selección de archivo */
 input[type="file"] {
   display: block;
   margin: 15px 0;
 }
 
-/* Botón de análisis */
 button {
   background-color: #22a06b;
   color: white;
@@ -58,7 +51,6 @@ button:hover {
   background-color: #168452;
 }
 
-/* Aviso informativo */
 .aviso {
   color: #64748b;
   font-size: 13px;
@@ -91,8 +83,6 @@ tr:nth-child(even) {
   background-color: #f1f5f9;
 }
 
-/* Resultados */
-
 .resultado-ok {
   color: #168452;
   font-weight: bold;
@@ -102,7 +92,6 @@ tr:nth-child(even) {
   color: #c62828;
   font-weight: bold;
 }
-/* Estilo de expresiones regulares */
 code {
   font-family: Consolas, monospace;
   font-size: 13px;
@@ -112,13 +101,11 @@ code {
   overflow-wrap: anywhere;
 }
 
-/* Separación de subtítulos */
 h3 {
   margin-top: 24px;
   color: #243b53;
 }
 
-/* Adaptación a pantallas pequeñas */
 @media (max-width: 768px) {
   main {
     padding: 0 12px;
@@ -131,4 +118,43 @@ h3 {
   table {
     min-width: 650px;
   }
+}
+.opciones-ingreso {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.opciones-ingreso label {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px;
+  margin: 10px 0 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.ejemplo-lenguaje {
+  background-color: #f1f5f9;
+  border-left: 4px solid #22a06b;
+  border-radius: 6px;
+  padding: 18px;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+[hidden] {
+  display: none !important;
 }

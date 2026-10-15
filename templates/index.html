@@ -6,10 +6,8 @@
 
     <title>Analizador de Postulaciones Laborales</title>
 
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <!-- CSS para Flask y Vercel -->
+    <link rel="stylesheet" href="/style.css" />
   </head>
 
   <body>
@@ -23,18 +21,112 @@
       <section class="panel">
         <h2>A. Caso</h2>
 
+        <h3>Enunciado del proyecto</h3>
         <p>
-          Esta plataforma permite analizar la estructura de postulaciones
-          laborales mediante técnicas de análisis léxico y sintáctico.
+          Las agencias de selección reciben postulaciones laborales que pueden
+          presentar errores de formato, campos incorrectos o información
+          estructurada de distintas maneras.
         </p>
 
-        <h3>Ingreso de archivo</h3>
+        <p>
+          Nuestra solución propone reconocer los componentes de un lenguaje
+          formal para postulaciones laborales mediante tokens, lexemas y
+          expresiones regulares.
+        </p>
+
+        <p class="aviso">
+          Actualmente se realiza el análisis léxico. La validación del orden y
+          de la estructura completa de las secciones se incorporará en el
+          análisis sintáctico.
+        </p>
+
+        <h3>Ingreso de datos</h3>
+
+        <p>Selecciona una forma de introducir la postulación:</p>
+
+        <div class="opciones-ingreso">
+          <label>
+            <input
+              type="radio"
+              name="modo_visual"
+              value="archivo"
+              checked
+              onclick="cambiarModo('archivo')"
+            />
+            Cargar archivo .txt
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="modo_visual"
+              value="texto"
+              onclick="cambiarModo('texto')"
+            />
+            Escribir texto
+          </label>
+        </div>
 
         <form method="POST" enctype="multipart/form-data">
-          <input type="file" name="archivo" accept=".txt" required />
+          <input type="hidden" name="modo" id="modo" value="archivo" />
+
+          <!-- OPCIÓN 1: ARCHIVO -->
+          <div id="panel-archivo">
+            <h3>Seleccionar archivo</h3>
+
+            <input type="file" id="archivo" name="archivo" accept=".txt" />
+
+            <p class="aviso">
+              Selecciona un archivo de texto con los campos definidos por
+              nuestro lenguaje.
+            </p>
+          </div>
+
+          <!-- OPCIÓN 2: TEXTO -->
+          <div id="panel-texto" hidden>
+            <h3>Escribir una postulación</h3>
+
+            <textarea
+              id="contenido"
+              name="contenido"
+              rows="13"
+              spellcheck="false"
+              placeholder="Escribe aquí la postulación..."
+            >
+{{ contenido_ingresado | default('', true) }}</textarea
+            >
+
+            <p class="aviso">
+              Puedes utilizar el ejemplo del lenguaje mostrado abajo.
+            </p>
+          </div>
 
           <button type="submit">Analizar postulación</button>
         </form>
+
+        <h3>Ejemplo de nuestro lenguaje</h3>
+
+        <pre class="ejemplo-lenguaje">
+DATOS_PERSONALES {
+NOMBRE: Juan Perez
+DNI: 12345678
+CORREO: juan@gmail.com
+}
+
+EDUCACION {
+INSTITUCION: Universidad de Lima
+}
+
+EXPERIENCIA {
+PUESTO: Asistente administrativo
+}</pre
+        >
+
+        <p class="aviso">
+          El lenguaje del proyecto utiliza las secciones DATOS_PERSONALES,
+          EDUCACION y EXPERIENCIA. Este ejemplo es una entrada de prueba y no un
+          CV completo.
+        </p>
       </section>
 
       <!-- B. RESULTADO -->
@@ -42,8 +134,9 @@
         <h2>B. Resultado</h2>
 
         {% if errores %}
-
-        <p class="resultado-error">Se encontraron errores:</p>
+        <p class="resultado-error">
+          Se encontraron errores léxicos o de entrada:
+        </p>
 
         <ul>
           {% for error in errores %}
@@ -52,39 +145,32 @@
         </ul>
 
         {% elif analizado %}
-
         <p class="resultado-ok">Análisis léxico completado sin errores.</p>
 
-        <p>Archivo: {{ nombre_archivo }}</p>
+        <p>Origen: {{ nombre_archivo }}</p>
 
         {% else %}
-
-        <p>Selecciona un archivo para comenzar el análisis.</p>
-
+        <p>
+          Carga un archivo o escribe una postulación para comenzar el análisis.
+        </p>
         {% endif %} {% if analizado %}
         <p class="aviso">
-          Este resultado corresponde únicamente al análisis léxico. La
-          validación sintáctica se incorporará en la siguiente etapa.
+          Este resultado corresponde únicamente al análisis léxico. Todavía no
+          significa que la postulación tenga una estructura sintáctica válida.
         </p>
         {% endif %}
       </section>
 
       <!-- 3.1 ANÁLISIS LÉXICO -->
       <section class="panel">
-        <link rel="stylesheet" href="/style.css" />
+        <h2>3.1 Análisis léxico</h2>
 
         <p>
-          El analizador identifica tokens y lexemas mediante expresiones
-          regulares.
+          El analizador identifica lexemas y los clasifica en tokens mediante
+          reglas y expresiones regulares.
         </p>
-        <!-- TABLA DE EXPRESIONES REGULARES -->
 
         <h3>Reglas y expresiones regulares</h3>
-
-        <p>
-          Las expresiones regulares permiten reconocer los valores de los campos
-          de una postulación laboral.
-        </p>
 
         <div class="tabla-contenedor">
           <table>
@@ -111,7 +197,7 @@
                   <code>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}</code>
                 </td>
                 <td>juan@gmail.com</td>
-                <td>Correo con formato básico válido</td>
+                <td>Formato básico de correo</td>
               </tr>
 
               <tr>
@@ -129,7 +215,7 @@
                   <code>[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9 .,-]+</code>
                 </td>
                 <td>Universidad de Lima</td>
-                <td>Letras, números y algunos signos</td>
+                <td>Letras, números y signos permitidos</td>
               </tr>
 
               <tr>
@@ -138,15 +224,16 @@
                   <code>[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9 .,-]+</code>
                 </td>
                 <td>Asistente administrativo</td>
-                <td>Nombre del puesto laboral</td>
+                <td>Descripción del puesto</td>
               </tr>
             </tbody>
           </table>
         </div>
+
         {% if analizado %}
+        <h3>Tabla de tokens y lexemas reconocidos</h3>
 
-        <h3>Tabla de tokens reconocidos</h3>
-
+        {% if tokens %}
         <div class="tabla-contenedor">
           <table>
             <thead>
@@ -170,11 +257,12 @@
             </tbody>
           </table>
         </div>
-
         {% else %}
-
-        <p>Los tokens aparecerán después de cargar un archivo.</p>
-
+        <p>No se reconocieron tokens.</p>
+        {% endif %} {% else %}
+        <p>
+          Los tokens y lexemas aparecerán después de analizar una postulación.
+        </p>
         {% endif %}
       </section>
 
@@ -183,10 +271,42 @@
         <h2>3.2 Análisis sintáctico</h2>
 
         <p>
-          Próximamente implementaremos las reglas de producción, la gramática
-          libre de contexto y el árbol sintáctico.
+          Esta etapa incorporará la gramática libre de contexto, las reglas de
+          producción, la validación del orden de las secciones y el árbol
+          sintáctico.
         </p>
+
+        <p class="aviso">Módulo pendiente de implementación.</p>
       </section>
     </main>
+
+    <!-- CONTROL DE LAS DOS FORMAS DE INGRESO -->
+    <script>
+      function cambiarModo(modo) {
+          const panelArchivo = document.getElementById("panel-archivo");
+          const panelTexto = document.getElementById("panel-texto");
+          const campoModo = document.getElementById("modo");
+
+          campoModo.value = modo;
+
+          panelArchivo.hidden = modo !== "archivo";
+          panelTexto.hidden = modo !== "texto";
+      }
+
+      // Mantener seleccionada la modalidad después del análisis
+      document.addEventListener("DOMContentLoaded", function() {
+          const modoInicial = {{ modo_actual | default('archivo') | tojson }};
+
+          cambiarModo(modoInicial);
+
+          const opcion = document.querySelector(
+              'input[name="modo_visual"][value="' + modoInicial + '"]'
+          );
+
+        <h3>Ingreso de datos</h3>  if (opcion) {
+              opcion.checked = true;
+          }
+      });
+    </script>
   </body>
 </html>
