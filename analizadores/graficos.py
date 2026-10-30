@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from html import escape
 from collections import defaultdict
@@ -23,14 +22,16 @@ def nombre_estado(estado):
     return str(estado)
 
 
-def normalizar_destinos(destinos):
+def normalizar_destinos(destinos, es_afnd=False):
     if destinos is None:
-        return set()
+        return []
 
-    if isinstance(destinos, (set, frozenset, list, tuple)):
-        return set(destinos)
+    if es_afnd:
+        if isinstance(destinos, (set, frozenset, list, tuple)):
+            return list(destinos)
+        return [destinos]
 
-    return {destinos}
+    return [destinos]
 
 
 def etiqueta_simbolos(simbolos, alfabeto):
@@ -43,7 +44,6 @@ def etiqueta_simbolos(simbolos, alfabeto):
     if simbolos == alfabeto:
         if alfabeto == set("0123456789"):
             return "0-9"
-
         return "Σ"
 
     if len(simbolos) == 1:
@@ -74,7 +74,7 @@ def obtener_transiciones(automata, es_afnd):
     alfabeto = set(automata["Sigma"])
 
     for (origen, simbolo), destinos in automata["delta"].items():
-        for destino in normalizar_destinos(destinos):
+        for destino in normalizar_destinos(destinos, es_afnd):
             if destino is not None:
                 grupos[(origen, destino)].add(simbolo)
 
@@ -156,9 +156,7 @@ def generar_svg(automata, titulo, archivo, es_afnd=False):
 
     partes = []
 
-    partes.append(
-        '<?xml version="1.0" encoding="UTF-8"?>'
-    )
+    partes.append('<?xml version="1.0" encoding="UTF-8"?>')
 
     partes.append(
         f'<svg xmlns="http://www.w3.org/2000/svg" '
@@ -175,9 +173,7 @@ def generar_svg(automata, titulo, archivo, es_afnd=False):
         '</defs>'
     )
 
-    partes.append(
-        '<rect width="100%" height="100%" fill="white"/>'
-    )
+    partes.append('<rect width="100%" height="100%" fill="white"/>')
 
     partes.append(
         elemento_svg(

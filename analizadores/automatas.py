@@ -1,20 +1,13 @@
-
 from collections import deque
-
 DIGITOS = tuple("0123456789")
 EPSILON = "ε"
-
-
 def construir_afnd_dni():
     estados = set(range(17))
     transiciones = {}
-
     for i in range(8):
         transiciones[(2 * i, EPSILON)] = {2 * i + 1}
-
         for digito in DIGITOS:
             transiciones[(2 * i + 1, digito)] = {2 * i + 2}
-
     return {
         "Q": estados,
         "Sigma": set(DIGITOS),
@@ -22,59 +15,41 @@ def construir_afnd_dni():
         "q0": 0,
         "F": {16}
     }
-
-
 def cerradura_epsilon(estados, transiciones):
     resultado = set(estados)
     pendientes = list(estados)
-
     while pendientes:
         actual = pendientes.pop()
-
         for destino in transiciones.get((actual, EPSILON), set()):
             if destino not in resultado:
                 resultado.add(destino)
                 pendientes.append(destino)
-
     return frozenset(resultado)
-
-
 def mover(estados, simbolo, transiciones):
     resultado = set()
-
     for estado in estados:
         resultado.update(transiciones.get((estado, simbolo), set()))
-
     return resultado
-
-
 def convertir_afnd_a_afd(afnd):
     inicial = cerradura_epsilon({afnd["q0"]}, afnd["delta"])
-
     nombres = {inicial: "q0"}
     cola = deque([inicial])
     transiciones = {}
     finales = set()
     conjuntos = {}
-
     while cola:
         conjunto = cola.popleft()
         nombre = nombres[conjunto]
         conjuntos[nombre] = sorted(conjunto)
-
         if conjunto.intersection(afnd["F"]):
             finales.add(nombre)
-
         for simbolo in sorted(afnd["Sigma"]):
             alcanzables = mover(conjunto, simbolo, afnd["delta"])
             destino = cerradura_epsilon(alcanzables, afnd["delta"])
-
             if destino not in nombres:
                 nombres[destino] = f"q{len(nombres)}"
                 cola.append(destino)
-
             transiciones[(nombre, simbolo)] = nombres[destino]
-
     return {
         "Q": set(nombres.values()),
         "Sigma": set(afnd["Sigma"]),
@@ -83,19 +58,13 @@ def convertir_afnd_a_afd(afnd):
         "F": finales,
         "conjuntos": conjuntos
     }
-
-
 def reconocer_afd(afd, cadena):
     estado = afd["q0"]
-
     for simbolo in cadena:
         if simbolo not in afd["Sigma"]:
             return False
-
         estado = afd["delta"][(estado, simbolo)]
-
     return estado in afd["F"]
-
 
 def mostrar_afnd(afnd):
     print("\n=== AFND DEL DNI ===")
