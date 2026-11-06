@@ -484,3 +484,7 @@ td code {
   padding: 8px;
   overflow-wrap: anywhere;
 }
+
+.selector-lexema-token:has(select option:only-child) {
+  display: none !important;
+}
