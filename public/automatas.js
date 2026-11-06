@@ -1598,6 +1598,25 @@ function actualizarRutaToken() {
 
     const etiquetas = new Map(grupos.map((g, i) => [g, etiqueta(g, i)]));
 
+    const camino = rutaAceptadaToken(a, palabraTokenActual);
+
+    const dibujados = [];
+
+    if (camino) {
+      for (const grupo of grupos) {
+        for (let i = 1; i < camino.length; i++) {
+          if (
+            grupo.origen === camino[i - 1].estado &&
+            grupo.destino === camino[i].estado &&
+            grupo.simbolos.includes(camino[i].letra)
+          ) {
+            dibujados.push(grupo);
+            break;
+          }
+        }
+      }
+    }
+
     cont.replaceChildren();
 
     if (controles) {
@@ -1606,7 +1625,7 @@ function actualizarRutaToken() {
 
     cont.appendChild(panel);
 
-    cont.appendChild(tablaDetalles(grupos, etiquetas, []));
+    cont.appendChild(tablaDetalles(grupos, etiquetas, dibujados));
   }
 }
 
