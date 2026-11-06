@@ -3,47 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Analizador de Postulaciones Laborales</title>
+    <title>Mini compilador de postulaciones laborales</title>
     <link rel="stylesheet" href="{{ url_for('estilos') }}" />
   </head>
-
   <body>
     <header class="encabezado">
-      <h1>Analizador Léxico y Sintáctico</h1>
-      <p>Sistema de validación estructural de postulaciones laborales</p>
+      <h1>Mini compilador de postulaciones laborales</h1>
+      <p>
+        Sistema de validación estructural mediante análisis léxico y sintáctico
+      </p>
     </header>
 
     <main>
-      <section class="panel">
-        <h2>A. Caso</h2>
+      <section class="panel" id="caso">
+        <h2>A. Caso: proceso de postulación laboral</h2>
 
-        <h3>Enunciado del proyecto</h3>
-
+        <h3>Problema que se busca resolver</h3>
         <p>
-          Las agencias de selección reciben postulaciones laborales que pueden
-          presentar errores de formato, campos incorrectos o información
-          estructurada de distintas maneras.
+          Las agencias de selección reciben postulaciones laborales con
+          información que puede estar incompleta, desordenada o presentar
+          formatos incorrectos. Esto dificulta su revisión inicial.
+        </p>
+        <p>
+          Esta aplicación utiliza una plantilla estándar para recibir los datos
+          del postulante, convertirlos a un lenguaje específico del dominio
+          (DSL) y comprobar su estructura mediante un mini compilador.
         </p>
 
-        <p>
-          Nuestra solución propone reconocer los componentes de un lenguaje
-          formal para postulaciones laborales mediante tokens, lexemas,
-          expresiones regulares y autómatas finitos.
-        </p>
+        <h3>Flujo del proceso empresarial</h3>
+        <div class="pasos-proceso">
+          <span>1. Recepción de plantilla</span>
+          <span>2. Conversión al DSL</span>
+          <span>3. Análisis léxico y sintáctico</span>
+          <span>4. Resultado para Recursos Humanos</span>
+        </div>
 
-        <h3>Ingreso de datos</h3>
-
-        <p>Selecciona una forma de introducir la postulación:</p>
+        <h3>Ingreso de la postulación</h3>
+        <p>Selecciona cómo deseas ingresar la información.</p>
 
         <div class="opciones-ingreso">
           <label>
-            <input type="radio" name="modo_visual" value="archivo" checked />
-            Cargar archivo .txt
+            <input type="radio" name="modo_visual" value="plantilla" />
+            Completar plantilla web
           </label>
-
+          <label>
+            <input type="radio" name="modo_visual" value="archivo" />
+            Subir plantilla .txt
+          </label>
           <label>
             <input type="radio" name="modo_visual" value="texto" />
-            Escribir texto
+            Escribir código DSL
           </label>
         </div>
 
@@ -54,7 +63,6 @@
             id="modo"
             value="{{ modo_actual }}"
           />
-
           <input
             type="hidden"
             name="campo"
@@ -62,41 +70,123 @@
             value="{{ campo_actual }}"
           />
 
-          <div id="panel-archivo">
-            <h3>Seleccionar archivo</h3>
+          <div id="panel-plantilla" class="plantilla-web">
+            <h3>Plantilla de postulación laboral</h3>
 
-            <input type="file" id="archivo" name="archivo" accept=".txt" />
+            <fieldset>
+              <legend>Datos personales</legend>
+              <div class="campos-grid">
+                <label>
+                  Nombre completo
+                  <input
+                    type="text"
+                    name="NOMBRE"
+                    value="{{ datos_plantilla.NOMBRE }}"
+                    placeholder="Juan Perez"
+                  />
+                </label>
+                <label>
+                  DNI
+                  <input
+                    type="text"
+                    name="DNI"
+                    inputmode="numeric"
+                    maxlength="20"
+                    value="{{ datos_plantilla.DNI }}"
+                    placeholder="12345678"
+                  />
+                </label>
+                <label>
+                  Correo electrónico
+                  <input
+                    type="text"
+                    name="CORREO"
+                    value="{{ datos_plantilla.CORREO }}"
+                    placeholder="juan@gmail.com"
+                  />
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Educación</legend>
+              <label>
+                Institución educativa
+                <input
+                  type="text"
+                  name="INSTITUCION"
+                  value="{{ datos_plantilla.INSTITUCION }}"
+                  placeholder="Universidad de Lima"
+                />
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Experiencia laboral</legend>
+              <label>
+                Puesto
+                <input
+                  type="text"
+                  name="PUESTO"
+                  value="{{ datos_plantilla.PUESTO }}"
+                  placeholder="Asistente administrativo"
+                />
+              </label>
+            </fieldset>
 
             <p class="aviso">
-              Selecciona un archivo de texto con los campos definidos por
-              nuestro lenguaje.
+              El sistema valida la estructura y el formato de la postulación. No
+              determina si el candidato debe ser contratado.
+            </p>
+          </div>
+
+          <div id="panel-archivo" hidden>
+            <h3>Cargar plantilla de postulación</h3>
+            <p>
+              <a
+                href="{{ url_for('descargar_plantilla') }}"
+                class="enlace-plantilla"
+              >
+                Descargar plantilla vacía (.txt)
+              </a>
+            </p>
+            <label for="archivo">Selecciona un archivo de texto:</label>
+            <input
+              type="file"
+              id="archivo"
+              name="archivo"
+              accept=".txt,text/plain"
+            />
+            <p class="aviso">
+              Completa la plantilla descargada y súbela. También puedes cargar
+              un archivo .txt que ya contenga el DSL completo. No se extrae
+              información de archivos PDF o Word.
             </p>
           </div>
 
           <div id="panel-texto" hidden>
-            <h3>Escribir una postulación</h3>
-
+            <h3>Ingreso directo del DSL</h3>
+            <p>
+              Esta modalidad está destinada a demostrar el funcionamiento del
+              analizador léxico y sintáctico.
+            </p>
             <textarea
               id="contenido"
               name="contenido"
-              rows="13"
+              rows="15"
               spellcheck="false"
-              placeholder="Escribe aquí tu postulación..."
+              placeholder="DATOS_PERSONALES {&#10;NOMBRE: Juan Perez&#10;DNI: 12345678&#10;CORREO: juan@gmail.com&#10;}"
             >
 {{ contenido_ingresado }}</textarea
             >
-
-            <p class="aviso">
-              Escribe los datos utilizando el formato del ejemplo.
-            </p>
           </div>
 
-          <button type="submit">Analizar postulación</button>
+          <button type="submit">Analizar y validar postulación</button>
         </form>
 
-        <h3>Ejemplo de nuestro lenguaje</h3>
-
-        <pre class="ejemplo-lenguaje">
+        <details class="ejemplo-desplegable">
+          <summary>Ver ejemplo del lenguaje DSL</summary>
+          <pre class="ejemplo-lenguaje">
 DATOS_PERSONALES {
 NOMBRE: Juan Perez
 DNI: 12345678
@@ -110,53 +200,193 @@ INSTITUCION: Universidad de Lima
 EXPERIENCIA {
 PUESTO: Asistente administrativo
 }</pre
-        >
-
-        <p class="aviso">
-          El lenguaje utiliza las secciones DATOS_PERSONALES, EDUCACION y
-          EXPERIENCIA. Este ejemplo es una entrada de prueba y no un currículum
-          completo.
-        </p>
+          >
+        </details>
       </section>
 
       <section class="panel" id="resultado">
-        <h2>B. Resultado</h2>
+        <h2>B. Resultado de la postulación</h2>
 
         {% if errores %}
-        <p class="resultado-error">Se encontraron errores:</p>
-
+        <p class="resultado-error">
+          Se encontraron errores durante el procesamiento. La postulación
+          requiere correcciones.
+        </p>
         <ul class="lista-errores">
           {% for error in errores %}
           <li>{{ error }}</li>
           {% endfor %}
         </ul>
-
-        {% elif analizado %}
-        <p class="resultado-ok">Análisis léxico completado sin errores.</p>
-
+        {% elif sintaxis and not sintaxis.valido %}
+        <p class="resultado-error">Error sintáctico: {{ sintaxis.mensaje }}</p>
+        {% elif analizado and sintaxis and sintaxis.valido %}
+        <p class="resultado-ok">
+          Postulación válida: análisis léxico y sintáctico completados.
+        </p>
+        <p>
+          La información se encuentra estructurada y lista para una revisión
+          posterior por Recursos Humanos.
+        </p>
         {% else %}
         <p>
-          Carga un archivo o escribe una postulación para comenzar el análisis.
+          Completa una plantilla o ingresa el DSL para comenzar el análisis.
         </p>
         {% endif %} {% if analizado %}
-        <p><strong>Origen:</strong> {{ nombre_archivo }}</p>
-
-        <p class="aviso">
-          Los resultados corresponden al análisis léxico. La validación
-          sintáctica completa aún no está implementada.
+        <p>
+          <strong>Origen de la información:</strong>
+          {{ nombre_archivo }}
         </p>
+        <p>
+          <strong>Tokens reconocidos:</strong>
+          {{ tokens|length }}
+        </p>
+        {% endif %} {% if dsl_generado %}
+        <h3>Representación intermedia: código DSL</h3>
+        <p>
+          Esta es la representación formal procesada por el mini compilador.
+        </p>
+        <pre class="ejemplo-lenguaje">{{ dsl_generado }}</pre>
         {% endif %}
       </section>
 
       <section class="panel" id="analisis-lexico">
-        <h2>3.1 Análisis léxico</h2>
+        <h2>C. Proceso interno del mini compilador</h2>
 
+        <h3>3.1 Análisis léxico</h3>
         <p>
-          El analizador identifica lexemas y los clasifica en tokens mediante
-          expresiones regulares.
+          El analizador léxico identifica los lexemas de la postulación y los
+          clasifica en categorías de tokens mediante expresiones regulares.
         </p>
 
-        <h3>Reglas y expresiones regulares</h3>
+        <h3>Tabla de tokens agrupadores</h3>
+        <p>
+          Cada token representa una categoría del lenguaje. Los lexemas son los
+          elementos concretos reconocidos.
+        </p>
+
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Token agrupador</th>
+                <th>Lexemas permitidos</th>
+                <th>Función</th>
+                <th>Apariciones</th>
+                <th>Lexemas encontrados</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for grupo in tokens_agrupados %}
+              <tr>
+                <td><code>{{ grupo.token }}</code></td>
+                <td>{{ grupo.definicion }}</td>
+                <td>{{ grupo.funcion }}</td>
+                <td>{{ grupo.cantidad }}</td>
+                <td>
+                  {% if grupo.lexemas %} {{ grupo.lexemas|join(', ') }} {% else
+                  %} — {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Relación entre tokens, expresiones regulares y autómatas</h3>
+        <p>
+          Los autómatas finitos se construyen a partir de las reglas de
+          reconocimiento de los tokens del lenguaje DSL. Cada token agrupa
+          lexemas que cumplen un patrón. Algunos valores utilizan restricciones
+          específicas según el campo donde aparecen.
+        </p>
+
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Token agrupador</th>
+                <th>Lexema o contexto</th>
+                <th>Regla de reconocimiento</th>
+                <th>Autómata relacionado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>TK_SECCION</code></td>
+                <td>DATOS_PERSONALES, EDUCACION, EXPERIENCIA</td>
+                <td>DATOS_PERSONALES|EDUCACION|EXPERIENCIA</td>
+                <td>Palabras reservadas de sección</td>
+              </tr>
+              <tr>
+                <td><code>TK_CAMPO</code></td>
+                <td>NOMBRE, DNI, CORREO, INSTITUCION, PUESTO</td>
+                <td>NOMBRE|DNI|CORREO|INSTITUCION|PUESTO</td>
+                <td>Identificadores reservados de campo</td>
+              </tr>
+              <tr>
+                <td><code>TK_DNI</code></td>
+                <td>12345678</td>
+                <td><code>[0123456789]{8}</code></td>
+                <td>AFND y AFD de DNI</td>
+              </tr>
+              <tr>
+                <td><code>TK_CORREO</code></td>
+                <td>juan@gmail.com</td>
+                <td>Usuario + @ + dominio + extensión</td>
+                <td>AFND y AFD de CORREO</td>
+              </tr>
+              <tr>
+                <td><code>TK_TEXTO</code></td>
+                <td>NOMBRE: Juan Perez</td>
+                <td>Letras y espacios</td>
+                <td>AFND y AFD de NOMBRE</td>
+              </tr>
+              <tr>
+                <td><code>TK_TEXTO</code></td>
+                <td>INSTITUCION: Universidad 2026</td>
+                <td>Letras, números, espacios y signos admitidos</td>
+                <td>AFND y AFD de INSTITUCION</td>
+              </tr>
+              <tr>
+                <td><code>TK_TEXTO</code></td>
+                <td>PUESTO: Analista de Software 2</td>
+                <td>Letras, números, espacios y signos admitidos</td>
+                <td>AFND y AFD de PUESTO</td>
+              </tr>
+              <tr>
+                <td><code>TK_ABRE</code></td>
+                <td>{</td>
+                <td>Símbolo literal de apertura</td>
+                <td>Delimitador de apertura</td>
+              </tr>
+              <tr>
+                <td><code>TK_CIERRA</code></td>
+                <td>}</td>
+                <td>Símbolo literal de cierre</td>
+                <td>Delimitador de cierre</td>
+              </tr>
+              <tr>
+                <td><code>TK_DOS_PUNTOS</code></td>
+                <td>:</td>
+                <td>Símbolo literal separador</td>
+                <td>Separador de campo y valor</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="aviso">
+          TK_TEXTO es una categoría léxica agrupadora. Los campos NOMBRE,
+          INSTITUCION y PUESTO comparten esta categoría, pero sus valores se
+          validan mediante patrones específicos. Los autómatas visualizados
+          corresponden a esas reglas de validación.
+        </p>
+
+        <h3>Expresiones regulares del DSL</h3>
+        <p>
+          Las siguientes reglas definen qué caracteres puede contener cada campo
+          de la postulación.
+        </p>
 
         <div class="tabla-contenedor">
           <table>
@@ -168,16 +398,11 @@ PUESTO: Asistente administrativo
                 <th>Descripción</th>
               </tr>
             </thead>
-
             <tbody>
               {% for regla in reglas %}
               <tr>
                 <td>{{ regla.campo }}</td>
-
-                <td>
-                  <code>{{ regla.expresion }}</code>
-                </td>
-
+                <td><code>{{ regla.expresion }}</code></td>
                 <td>{{ regla.ejemplo }}</td>
                 <td>{{ regla.descripcion }}</td>
               </tr>
@@ -186,10 +411,13 @@ PUESTO: Asistente administrativo
           </table>
         </div>
 
-        {% if analizado %}
-        <h3>Tabla de tokens y lexemas reconocidos</h3>
+        <h3>Secuencia de tokens reconocidos</h3>
 
-        {% if tokens %}
+        {% if analizado and tokens %}
+        <p>
+          Esta tabla muestra cada aparición de un token dentro de la entrada
+          analizada.
+        </p>
         <div class="tabla-contenedor">
           <table>
             <thead>
@@ -200,12 +428,11 @@ PUESTO: Asistente administrativo
                 <th>Línea</th>
               </tr>
             </thead>
-
             <tbody>
               {% for token in tokens %}
               <tr>
                 <td>{{ loop.index }}</td>
-                <td>{{ token.token }}</td>
+                <td><code>{{ token.token }}</code></td>
                 <td>{{ token.lexema }}</td>
                 <td>{{ token.linea }}</td>
               </tr>
@@ -213,29 +440,42 @@ PUESTO: Asistente administrativo
             </tbody>
           </table>
         </div>
-
+        {% elif analizado %}
+        <p>No se reconocieron tokens válidos.</p>
         {% else %}
-        <p>No se reconocieron tokens.</p>
-        {% endif %} {% else %}
-        <p>
-          Los tokens y lexemas aparecerán después de analizar una postulación.
-        </p>
+        <p>La secuencia aparecerá después de analizar una postulación.</p>
         {% endif %}
 
-        <h3>Autómatas finitos</h3>
-
+        <h3>Autómatas finitos del lenguaje</h3>
         <p>
-          Selecciona un campo para consultar su expresión regular, AFND, AFD,
-          quíntuplas y tablas de transiciones.
+          Selecciona un token reservado, un delimitador o una regla de valor
+          para consultar su expresión regular, AFND, AFD, quíntuplas y
+          transiciones. Los tokens agrupan lexemas; las reglas de valor
+          comprueban el contenido de cada campo de la postulación.
         </p>
 
         <div class="selector-campo">
-          <label for="campo">Campo:</label>
+          <label for="campo">Token o regla:</label>
 
           <select id="campo" name="campo">
-            {% for opcion in campos %}
-            <option value="{{ opcion }}">{{ opcion }}</option>
-            {% endfor %}
+            <optgroup label="Tokens agrupadores del DSL">
+              <option value="TK_SECCION">TK_SECCION — Secciones</option>
+              <option value="TK_CAMPO">TK_CAMPO — Identificadores</option>
+            </optgroup>
+
+            <optgroup label="Delimitadores del DSL">
+              <option value="TK_ABRE">TK_ABRE — {</option>
+              <option value="TK_CIERRA">TK_CIERRA — }</option>
+              <option value="TK_DOS_PUNTOS">TK_DOS_PUNTOS — :</option>
+            </optgroup>
+
+            <optgroup label="Reglas de validación de valores">
+              <option value="DNI">DNI</option>
+              <option value="CORREO">CORREO</option>
+              <option value="NOMBRE">NOMBRE</option>
+              <option value="INSTITUCION">INSTITUCION</option>
+              <option value="PUESTO">PUESTO</option>
+            </optgroup>
           </select>
         </div>
 
@@ -246,10 +486,9 @@ PUESTO: Asistente administrativo
         </div>
 
         <h3>Autómata Finito No Determinista (AFND)</h3>
-
         <p id="descripcion-afnd">
-          El AFND reconoce las cadenas que cumplen la expresión regular del
-          campo seleccionado.
+          El AFND reconoce cadenas mediante transiciones que pueden incluir
+          movimientos ε.
         </p>
 
         <div class="contenedor-automata" id="grafico-afnd">
@@ -257,7 +496,6 @@ PUESTO: Asistente administrativo
         </div>
 
         <h3>Quíntupla del AFND</h3>
-
         <p>M = (Q, Σ, δ, q₀, F)</p>
 
         <div class="tabla-contenedor">
@@ -268,17 +506,15 @@ PUESTO: Asistente administrativo
                 <th>Valor</th>
               </tr>
             </thead>
-
             <tbody id="quintupla-afnd">
               <tr>
-                <td colspan="2">Cargando...</td>
+                <td colspan="2">Cargando información...</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <h3>Tabla de transiciones del AFND</h3>
-
         <div class="tabla-contenedor">
           <table>
             <thead>
@@ -288,19 +524,18 @@ PUESTO: Asistente administrativo
                 <th>Estado destino</th>
               </tr>
             </thead>
-
             <tbody id="transiciones-afnd">
               <tr>
-                <td colspan="3">Cargando...</td>
+                <td colspan="3">Cargando transiciones...</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <h3>Autómata Finito Determinista (AFD)</h3>
-
         <p id="descripcion-afd">
-          El AFD reconoce las cadenas mediante transiciones deterministas.
+          El AFD reconoce las cadenas mediante una transición definida por cada
+          estado y símbolo del alfabeto.
         </p>
 
         <div class="contenedor-automata" id="grafico-afd">
@@ -308,7 +543,6 @@ PUESTO: Asistente administrativo
         </div>
 
         <h3>Quíntupla del AFD</h3>
-
         <p>M = (Q, Σ, δ, q₀, F)</p>
 
         <div class="tabla-contenedor">
@@ -319,17 +553,15 @@ PUESTO: Asistente administrativo
                 <th>Valor</th>
               </tr>
             </thead>
-
             <tbody id="quintupla-afd">
               <tr>
-                <td colspan="2">Cargando...</td>
+                <td colspan="2">Cargando información...</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <h3>Tabla de transiciones del AFD</h3>
-
         <div class="tabla-contenedor">
           <table>
             <thead>
@@ -339,43 +571,175 @@ PUESTO: Asistente administrativo
                 <th>Estado destino</th>
               </tr>
             </thead>
-
             <tbody id="transiciones-afd">
               <tr>
-                <td colspan="3">Cargando...</td>
+                <td colspan="3">Cargando transiciones...</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <p class="aviso">
-          Las transiciones se agrupan por estado de origen y destino. Coloca el
-          cursor sobre una flecha para consultar todos sus símbolos. ε
-          representa una transición sin consumir caracteres.
+          El símbolo ε representa una transición sin consumir caracteres. El
+          alfabeto y las transiciones deben corresponder a la expresión regular
+          del token o regla seleccionada.
         </p>
-      </section>
 
-      <section class="panel">
-        <h2>3.2 Análisis sintáctico</h2>
-
+        <h3>3.2 Análisis sintáctico</h3>
         <p>
-          El diseño contempla una gramática libre de contexto para comprobar el
-          orden de las secciones y la presencia de los campos obligatorios.
+          La gramática libre de contexto establece el orden de las secciones y
+          los campos obligatorios de la postulación.
         </p>
+
+        <h3>Gramática del lenguaje</h3>
+        <p><strong>G = (V, T, P, S)</strong></p>
+        <p>V = {S, DP, ED, EX, CN, CD, CC, CI, CP}</p>
+        <p>S es el símbolo inicial.</p>
+        <p>
+          Los terminales corresponden a las secciones, identificadores,
+          delimitadores y valores reconocidos por el analizador léxico.
+        </p>
+
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>No terminal</th>
+                <th>Producción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>S</td>
+                <td>DP ED EX</td>
+              </tr>
+              <tr>
+                <td>DP</td>
+                <td>DATOS_PERSONALES { CN CD CC }</td>
+              </tr>
+              <tr>
+                <td>ED</td>
+                <td>EDUCACION { CI }</td>
+              </tr>
+              <tr>
+                <td>EX</td>
+                <td>EXPERIENCIA { CP }</td>
+              </tr>
+              <tr>
+                <td>CN</td>
+                <td>NOMBRE : TK_TEXTO</td>
+              </tr>
+              <tr>
+                <td>CD</td>
+                <td>DNI : TK_DNI</td>
+              </tr>
+              <tr>
+                <td>CC</td>
+                <td>CORREO : TK_CORREO</td>
+              </tr>
+              <tr>
+                <td>CI</td>
+                <td>INSTITUCION : TK_TEXTO</td>
+              </tr>
+              <tr>
+                <td>CP</td>
+                <td>PUESTO : TK_TEXTO</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Resultado del análisis sintáctico</h3>
+
+        {% if analizado and errores %}
+        <p class="resultado-error">
+          Debes corregir los errores léxicos antes de ejecutar el análisis
+          sintáctico.
+        </p>
+        {% elif sintaxis %}
+        <p
+          class="{{ 'resultado-ok' if sintaxis.valido else 'resultado-error' }}"
+        >
+          {{ sintaxis.mensaje }}
+        </p>
+
+        {% if sintaxis.valido and sintaxis.arbol %}
+        <h3>Árbol de derivación</h3>
+
+        {% macro mostrar_nodo(nodo) %}
+        <li>
+          <span>{{ nodo.simbolo }}</span>
+          {% if nodo.hijos %}
+          <ul>
+            {% for hijo in nodo.hijos %} {{ mostrar_nodo(hijo) }} {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+        {% endmacro %}
+
+        <div class="arbol-derivacion">
+          <ul>
+            {{ mostrar_nodo(sintaxis.arbol) }}
+          </ul>
+        </div>
+        {% endif %}
+
+        <h3>Pasos del análisis predictivo</h3>
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Paso</th>
+                <th>Operación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for paso in sintaxis.pasos %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ paso }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if salida_json %}
+        <h3>Traducción del DSL a JSON</h3>
+        <p>
+          Cuando el análisis léxico y sintáctico finalizan correctamente, el
+          sistema transforma los datos de la postulación a una estructura JSON.
+        </p>
+
+        <pre class="ejemplo-lenguaje">{{ salida_json }}</pre>
+
+        <a
+          class="boton-descarga"
+          download="postulacion.json"
+          href="data:application/json;charset=utf-8,{{ salida_json|urlencode }}"
+        >
+          Descargar resultado JSON
+        </a>
 
         <p class="aviso">
-          El analizador sintáctico y su árbol de derivación están pendientes de
-          implementación.
+          Este resultado puede utilizarse como entrada para una etapa posterior
+          de revisión por Recursos Humanos. No significa que el candidato haya
+          sido seleccionado.
         </p>
+        {% endif %} {% else %}
+        <p>
+          Analiza una postulación para visualizar el resultado sintáctico y su
+          árbol de derivación.
+        </p>
+        {% endif %}
       </section>
     </main>
 
-    <script src="{{ url_for('javascript_automatas') }}"></script>
-
+    <script src="{{ url_for('javascript_automatas') }}?v=tokens2"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const opciones = document.querySelectorAll('input[name="modo_visual"]');
-
+        const panelPlantilla = document.getElementById("panel-plantilla");
         const panelArchivo = document.getElementById("panel-archivo");
         const panelTexto = document.getElementById("panel-texto");
         const campoModo = document.getElementById("modo");
@@ -384,11 +748,12 @@ PUESTO: Asistente administrativo
 
         function cambiarModo(modo) {
           campoModo.value = modo;
+          panelPlantilla.hidden = modo !== "plantilla";
           panelArchivo.hidden = modo !== "archivo";
           panelTexto.hidden = modo !== "texto";
         }
 
-        const modoInicial = campoModo.value || "archivo";
+        const modoInicial = campoModo.value || "plantilla";
 
         opciones.forEach(function (opcion) {
           opcion.checked = opcion.value === modoInicial;
@@ -407,10 +772,15 @@ PUESTO: Asistente administrativo
 
         selectorCampo.addEventListener("change", function () {
           campoFormulario.value = selectorCampo.value;
-          cargarCampoAutomatas(selectorCampo.value);
+
+          if (typeof cargarCampoAutomatas === "function") {
+            cargarCampoAutomatas(selectorCampo.value);
+          }
         });
 
-        cargarCampoAutomatas(selectorCampo.value);
+        if (typeof cargarCampoAutomatas === "function") {
+          cargarCampoAutomatas(selectorCampo.value);
+        }
       });
     </script>
   </body>

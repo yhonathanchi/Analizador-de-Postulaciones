@@ -17,15 +17,15 @@ LETRAS = (
 DIGITOS = "0123456789"
 
 PATRONES = {
-    "NOMBRE": r"[A-Za-zÁÉÍÓÚáéíóúÑñÜü ]+",
-    "INSTITUCION": r"[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9 .,-]+",
-    "PUESTO": r"[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9 .,-]+"
+    "NOMBRE": r"[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÁÉÍÓÚáéíóúÑñÜü ]+",
+    "INSTITUCION": r"[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÁÉÍÓÚáéíóúÑñÜü0123456789 .,]+",
+    "PUESTO": r"[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÁÉÍÓÚáéíóúÑñÜü0123456789 .,]+"
 }
 
 ALFABETOS = {
     "NOMBRE": set(LETRAS + " "),
-    "INSTITUCION": set(LETRAS + DIGITOS + " .,-"),
-    "PUESTO": set(LETRAS + DIGITOS + " .,-")
+    "INSTITUCION": set(LETRAS + DIGITOS + " .,"),
+    "PUESTO": set(LETRAS + DIGITOS + " .,")
 }
 
 

@@ -1,173 +1,267 @@
 
-from collections import defaultdict
+import re
 
 from analizadores.automatas import (
-    EPSILON,
     construir_afnd_dni,
-    convertir_afnd_a_afd
-)
-from analizadores.patrones import (
-    construir_afnd_campo,
-    PATRONES
-)
-from analizadores.correo import (
-    construir_afnd_correo,
-    PATRON_CORREO
+    construir_afnd_token,
+    convertir_afnd_a_afd,
+    reconocer_afd,
+    TOKENS_RESERVADOS
 )
 
+from analizadores.patrones import construir_afnd_campo
+from analizadores.correo import construir_afnd_correo
+from analizadores.lexico import PATRONES
 
-CAMPOS = ("DNI", "CORREO", "NOMBRE", "INSTITUCION", "PUESTO")
+
+CAMPOS = (
+    "DNI",
+    "CORREO",
+    "NOMBRE",
+    "INSTITUCION",
+    "PUESTO"
+)
+
+TOKENS = tuple(TOKENS_RESERVADOS.keys())
 
 EXPRESIONES = {
-    "DNI": r"[0-9]{8}",
-    "CORREO": PATRON_CORREO,
-    **PATRONES
+    campo: PATRONES[campo]
+    for campo in CAMPOS
 }
 
-
-def nombre_estado(estado):
-    if isinstance(estado, int):
-        return f"q{estado}"
-    return str(estado)
-
-
-def clave_estado(estado):
-    nombre = nombre_estado(estado)
-    if nombre.startswith("q") and nombre[1:].isdigit():
-        return (0, int(nombre[1:]))
-    return (1, nombre)
-
-
-def ordenar_estados(estados):
-    return sorted(estados, key=clave_estado)
-
-
-def conjunto_estados(estados):
-    return "{ " + ", ".join(
-        nombre_estado(estado)
-        for estado in ordenar_estados(estados)
-    ) + " }"
-
-
-def representar_simbolos(simbolos, alfabeto):
-    simbolos = set(simbolos)
-    alfabeto = set(alfabeto)
-
-    if simbolos == alfabeto and simbolos:
-        return "Σ"
-
-    if simbolos == set("0123456789"):
-        return "0–9"
-
-    return ", ".join(
-        repr(simbolo) for simbolo in sorted(simbolos)
+EXPRESIONES.update({
+    token: (
+        "(?:" +
+        "|".join(
+            re.escape(lexema)
+            for lexema in lexemas
+        ) +
+        ")"
     )
-
-
-def normalizar_destinos(destinos):
-    if destinos is None:
-        return set()
-
-    if isinstance(destinos, (set, frozenset, list, tuple)):
-        return set(destinos)
-
-    return {destinos}
+    for token, lexemas in TOKENS_RESERVADOS.items()
+})
 
 
 def construir_automatas(campo):
-    if campo not in CAMPOS:
-        raise ValueError("Campo no reconocido")
+    campo = campo.upper().strip()
 
-    if campo == "DNI":
+    if campo in TOKENS:
+        afnd = construir_afnd_token(campo)
+
+    elif campo == "DNI":
         afnd = construir_afnd_dni()
+
     elif campo == "CORREO":
         afnd = construir_afnd_correo()
-    else:
+
+    elif campo in CAMPOS:
         afnd = construir_afnd_campo(campo)
+
+    else:
+        raise ValueError(
+            f"Campo o token no reconocido: {campo}"
+        )
 
     afd = convertir_afnd_a_afd(afnd)
 
     return afnd, afd
 
 
-def preparar_quintupla(automata):
-    alfabeto = sorted(automata["Sigma"])
+def obtener_tabla_afnd(afnd):
+    tabla = []
+
+    estados = sorted(afnd["Q"])
+
+    for estado in estados:
+        transiciones_estado = []
+
+        for (origen, simbolo), destinos in afnd["delta"].items():
+            if origen != estado:
+                continue
+
+            transiciones_estado.append({
+                "simbolo": simbolo,
+                "destinos": sorted(destinos)
+            })
+
+        transiciones_estado.sort(
+            key=lambda item: str(item["simbolo"])
+        )
+
+        tabla.append({
+            "estado": f"q{estado}",
+            "inicial": estado == afnd["q0"],
+            "final": estado in afnd["F"],
+            "transiciones": transiciones_estado
+        })
+
+    return tabla
+
+
+def obtener_tabla_afd(afd):
+    tabla = []
+
+    estados = sorted(
+        afd["Q"],
+        key=lambda estado: int(estado[1:])
+    )
+
+    for estado in estados:
+        transiciones_estado = []
+
+        for simbolo in sorted(afd["Sigma"]):
+            destino = afd["delta"].get(
+                (estado, simbolo)
+            )
+
+            if destino is not None:
+                transiciones_estado.append({
+                    "simbolo": simbolo,
+                    "destino": destino
+                })
+
+        tabla.append({
+            "estado": estado,
+            "inicial": estado == afd["q0"],
+            "final": estado in afd["F"],
+            "transiciones": transiciones_estado,
+            "subconjunto": afd.get(
+                "conjuntos", {}
+            ).get(estado, [])
+        })
+
+    return tabla
+
+
+def obtener_quintupla(automata, tipo):
+    tipo = tipo.upper()
+
+    if tipo not in ("AFND", "AFD"):
+        raise ValueError(
+            "El tipo debe ser AFND o AFD"
+        )
+
+    if tipo == "AFND":
+        transiciones = {
+            (origen, simbolo): sorted(destinos)
+            for (origen, simbolo), destinos
+            in automata["delta"].items()
+        }
+    else:
+        transiciones = dict(
+            automata["delta"]
+        )
 
     return {
-        "estados": conjunto_estados(automata["Q"]),
-        "alfabeto": "{ " + ", ".join(
-            repr(simbolo) for simbolo in alfabeto
-        ) + " }",
-        "inicial": nombre_estado(automata["q0"]),
-        "finales": conjunto_estados(automata["F"]),
-        "cantidad": len(automata["Q"])
+        "Q": sorted(
+            automata["Q"],
+            key=lambda estado: (
+                int(estado[1:])
+                if isinstance(estado, str)
+                and estado.startswith("q")
+                else estado
+            )
+        ),
+        "Sigma": sorted(automata["Sigma"]),
+        "delta": transiciones,
+        "q0": automata["q0"],
+        "F": sorted(
+            automata["F"],
+            key=lambda estado: (
+                int(estado[1:])
+                if isinstance(estado, str)
+                and estado.startswith("q")
+                else estado
+            )
+        )
     }
 
 
-def preparar_transiciones(automata):
-    grupos = defaultdict(set)
+def validar_con_automata(campo, valor):
+    campo = campo.upper().strip()
 
-    for (origen, simbolo), destinos in automata["delta"].items():
-        for destino in normalizar_destinos(destinos):
-            grupos[(origen, destino)].add(simbolo)
+    _, afd = construir_automatas(campo)
 
-    filas = []
-    alfabeto = automata["Sigma"]
-
-    for (origen, destino), simbolos in sorted(
-        grupos.items(),
-        key=lambda elemento: (
-            clave_estado(elemento[0][0]),
-            clave_estado(elemento[0][1])
-        )
-    ):
-        simbolos_normales = set(simbolos) & set(alfabeto)
-        simbolos_epsilon = set(simbolos) - set(alfabeto)
-
-        if simbolos_epsilon:
-            filas.append({
-                "origen": nombre_estado(origen),
-                "simbolos": "ε",
-                "destino": nombre_estado(destino)
-            })
-
-        if simbolos_normales:
-            filas.append({
-                "origen": nombre_estado(origen),
-                "simbolos": representar_simbolos(
-                    simbolos_normales,
-                    alfabeto
-                ),
-                "destino": nombre_estado(destino)
-            })
-
-    return filas
+    return reconocer_afd(
+        afd,
+        valor
+    )
 
 
-def obtener_datos_automatas(campo="DNI"):
-    if campo not in CAMPOS:
-        campo = "DNI"
+def obtener_informacion_campo(campo):
+    campo = campo.upper().strip()
 
     afnd, afd = construir_automatas(campo)
 
     return {
-        "campo_actual": campo,
-        "campos_disponibles": CAMPOS,
-        "expresion_actual": EXPRESIONES[campo],
-        "quintupla_afnd": preparar_quintupla(afnd),
-        "quintupla_afd": preparar_quintupla(afd),
-        "tabla_afnd": preparar_transiciones(afnd),
-        "tabla_afd": preparar_transiciones(afd)
+        "campo": campo,
+        "expresion_regular": EXPRESIONES[campo],
+        "afnd": {
+            "quintupla": obtener_quintupla(
+                afnd,
+                "AFND"
+            ),
+            "tabla": obtener_tabla_afnd(afnd)
+        },
+        "afd": {
+            "quintupla": obtener_quintupla(
+                afd,
+                "AFD"
+            ),
+            "tabla": obtener_tabla_afd(afd)
+        }
     }
 
 
 if __name__ == "__main__":
-    for campo in CAMPOS:
-        datos = obtener_datos_automatas(campo)
-        print(
+    ejemplos = {
+        "DNI": "12345678",
+        "CORREO": "juan@gmail.com",
+        "NOMBRE": "Juan Perez",
+        "INSTITUCION": "Universidad de Lima",
+        "PUESTO": "Asistente administrativo",
+        "TK_SECCION": "DATOS_PERSONALES",
+        "TK_CAMPO": "NOMBRE",
+        "TK_ABRE": "{",
+        "TK_CIERRA": "}",
+        "TK_DOS_PUNTOS": ":"
+    }
+
+    for campo, ejemplo in ejemplos.items():
+        informacion = obtener_informacion_campo(campo)
+        afnd, afd = construir_automatas(campo)
+
+        resultado = validar_con_automata(
             campo,
-            "AFND:",
-            datos["quintupla_afnd"]["cantidad"],
-            "AFD:",
-            datos["quintupla_afd"]["cantidad"]
+            ejemplo
+        )
+
+        print("\n" + "=" * 50)
+        print("CAMPO O TOKEN:", campo)
+        print("=" * 50)
+
+        print(
+            "Expresion regular:",
+            informacion["expresion_regular"]
+        )
+
+        print("\nAFND")
+        print("Estados:", len(afnd["Q"]))
+        print("Alfabeto:", sorted(afnd["Sigma"]))
+        print("Estado inicial:", afnd["q0"])
+        print("Estados finales:", sorted(afnd["F"]))
+        print("Transiciones:", len(afnd["delta"]))
+
+        print("\nAFD")
+        print("Estados:", len(afd["Q"]))
+        print("Alfabeto:", sorted(afd["Sigma"]))
+        print("Estado inicial:", afd["q0"])
+        print("Estados finales:", sorted(afd["F"]))
+        print("Transiciones:", len(afd["delta"]))
+
+        print("\nPRUEBA")
+        print(
+            repr(ejemplo),
+            "=>",
+            "ACEPTADO" if resultado else "RECHAZADO"
         )

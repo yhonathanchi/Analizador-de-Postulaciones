@@ -1,62 +1,137 @@
 
 import re
-from pathlib import Path
 
 from analizadores.automatas import (
     EPSILON,
     convertir_afnd_a_afd,
     reconocer_afd
 )
-from analizadores.graficos import generar_svg
 
 
-LETRAS = set(
+LETRAS = (
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz"
 )
 
-DIGITOS = set("0123456789")
+DIGITOS = "0123456789"
 
-USUARIO = LETRAS | DIGITOS | set("._%+-")
-DOMINIO = LETRAS | DIGITOS | set(".-")
-
-PATRON_CORREO = (
-    r"[A-Za-z0-9._%+-]+"
-    r"@"
-    r"[A-Za-z0-9.-]+"
-    r"\."
-    r"[A-Za-z]{2,}"
+CARACTERES_USUARIO = set(
+    LETRAS + DIGITOS + "._%+-"
 )
+
+CARACTERES_DOMINIO = set(
+    LETRAS + DIGITOS + ".-"
+)
+
+CARACTERES_EXTENSION = set(LETRAS)
+
+ALFABETO = (
+    CARACTERES_USUARIO
+    | CARACTERES_DOMINIO
+    | CARACTERES_EXTENSION
+    | {"@"}
+)
+
+EXPRESION_CORREO = (
+    r"[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._%+\-]+"
+    r"@"
+    r"[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.\-]+"
+    r"\."
+    r"[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]{2,}"
+)
+
+PATRON_CORREO = EXPRESION_CORREO
+
+
+def agregar_transicion(transiciones, origen, simbolo, destino):
+    clave = (origen, simbolo)
+
+    if clave not in transiciones:
+        transiciones[clave] = set()
+
+    transiciones[clave].add(destino)
 
 
 def construir_afnd_correo():
-    sigma = USUARIO | DOMINIO | LETRAS | {"@"}
+    transiciones = {}
 
-    delta = {
-        (0, EPSILON): {1}
-    }
+    agregar_transicion(
+        transiciones,
+        0,
+        EPSILON,
+        1
+    )
 
-    for simbolo in USUARIO:
-        delta[(1, simbolo)] = {2}
-        delta[(2, simbolo)] = {2}
+    for simbolo in CARACTERES_USUARIO:
+        agregar_transicion(
+            transiciones,
+            1,
+            simbolo,
+            2
+        )
 
-    delta[(2, "@")] = {3}
+        agregar_transicion(
+            transiciones,
+            2,
+            simbolo,
+            2
+        )
 
-    for simbolo in DOMINIO:
-        delta[(3, simbolo)] = {4}
-        delta[(4, simbolo)] = {4}
+    agregar_transicion(
+        transiciones,
+        2,
+        "@",
+        3
+    )
 
-    delta[(4, ".")].add(5)
+    for simbolo in CARACTERES_DOMINIO:
+        agregar_transicion(
+            transiciones,
+            3,
+            simbolo,
+            4
+        )
 
-    for simbolo in LETRAS:
-        delta[(5, simbolo)] = {6}
-        delta[(6, simbolo)] = {7}
-        delta[(7, simbolo)] = {7}
+        agregar_transicion(
+            transiciones,
+            4,
+            simbolo,
+            4
+        )
+
+    agregar_transicion(
+        transiciones,
+        4,
+        ".",
+        5
+    )
+
+    for simbolo in CARACTERES_EXTENSION:
+        agregar_transicion(
+            transiciones,
+            5,
+            simbolo,
+            6
+        )
+
+        agregar_transicion(
+            transiciones,
+            6,
+            simbolo,
+            7
+        )
+
+        agregar_transicion(
+            transiciones,
+            7,
+            simbolo,
+            7
+        )
 
     return {
         "Q": set(range(8)),
-        "Sigma": sigma,
-        "delta": delta,
+        "Sigma": ALFABETO.copy(),
+        "delta": transiciones,
         "q0": 0,
         "F": {7}
     }
@@ -67,72 +142,110 @@ def construir_afd_correo():
     return convertir_afnd_a_afd(afnd)
 
 
+def reconocer_afnd_correo(cadena):
+    afd = construir_afd_correo()
+    return reconocer_afd(afd, cadena)
+
+
 def validar_correo(correo):
     afd = construir_afd_correo()
 
-    aceptado_afd = reconocer_afd(afd, correo)
-    aceptado_regex = re.fullmatch(
-        PATRON_CORREO,
+    resultado_afd = reconocer_afd(
+        afd,
         correo
-    ) is not None
+    )
+
+    resultado_regex = (
+        re.fullmatch(
+            EXPRESION_CORREO,
+            correo
+        ) is not None
+    )
 
     return {
         "correo": correo,
-        "aceptado": aceptado_afd,
-        "coincide_regex": aceptado_afd == aceptado_regex
+        "aceptado": resultado_afd,
+        "coincide_regex": resultado_afd == resultado_regex
     }
 
 
-def generar_graficos_correo():
-    carpeta = Path("ejemplos")
-
+def mostrar_automatas():
     afnd = construir_afnd_correo()
-    afd = convertir_afnd_a_afd(afnd)
+    afd = construir_afd_correo()
 
-    generar_svg(
-        afnd,
-        "AFND del CORREO",
-        carpeta / "afnd_correo.svg",
-        es_afnd=True
-    )
+    print("\n=== EXPRESION REGULAR ===")
+    print(EXPRESION_CORREO)
 
-    generar_svg(
-        afd,
-        "AFD del CORREO",
-        carpeta / "afd_correo.svg"
-    )
+    print("\n=== AFND DEL CORREO ===")
+    print("Q =", sorted(afnd["Q"]))
+    print("Sigma =", sorted(afnd["Sigma"]))
+    print("q0 =", afnd["q0"])
+    print("F =", sorted(afnd["F"]))
 
-    return afnd, afd
+    print("\n=== TRANSICIONES DEL AFND ===")
+
+    for (origen, simbolo), destinos in sorted(
+        afnd["delta"].items(),
+        key=lambda item: (
+            item[0][0],
+            item[0][1]
+        )
+    ):
+        print(
+            f"δ(q{origen}, {simbolo}) = "
+            f"{sorted(destinos)}"
+        )
+
+    print("\n=== AFD DEL CORREO ===")
+    print("Q =", sorted(afd["Q"]))
+    print("Sigma =", sorted(afd["Sigma"]))
+    print("q0 =", afd["q0"])
+    print("F =", sorted(afd["F"]))
+
+    print("\n=== SUBCONJUNTOS ===")
+
+    for estado, conjunto in sorted(
+        afd["conjuntos"].items(),
+        key=lambda item: int(item[0][1:])
+    ):
+        print(
+            estado,
+            "=",
+            conjunto
+        )
+
+    print("\n=== TRANSICIONES DEL AFD ===")
+
+    for (origen, simbolo), destino in sorted(
+        afd["delta"].items(),
+        key=lambda item: (
+            int(item[0][0][1:]),
+            item[0][1]
+        )
+    ):
+        print(
+            f"δ({origen}, {simbolo}) = {destino}"
+        )
 
 
 if __name__ == "__main__":
-    afnd, afd = generar_graficos_correo()
-
-    print("=== AUTOMATAS DEL CORREO ===")
-    print("Expresion regular:", PATRON_CORREO)
-    print("Estados AFND:", len(afnd["Q"]))
-    print("Estados AFD:", len(afd["Q"]))
-
-    pruebas = [
-        ("juan@gmail.com", True),
-        ("maria.lopez@usil.edu.pe", True),
-        ("usuario123@empresa.org", True),
-        ("juan+test@gmail.com", True),
-        ("a@b.co", True),
-        ("juan@gmail", False),
-        ("juan@gmail.c", False),
-        ("juangmail.com", False),
-        ("juan@@gmail.com", False),
-        ("@gmail.com", False),
-        ("juan@.com", False),
-        ("juan@gmail.123", False),
-        ("", False)
+    ejemplos = [
+        "juan@gmail.com",
+        "maria.lopez@outlook.com",
+        "usuario123@universidad.edu",
+        "nombre+trabajo@gmail.com",
+        "juan@gmail",
+        "juan@",
+        "@gmail.com",
+        "juan@gmail.c",
+        "juan gmail.com",
+        ""
     ]
 
-    print("\n=== PRUEBAS ===")
+    print("\n=== PRUEBAS DE CORREO ===")
 
-    for correo, esperado in pruebas:
-        resultado = validar_correo(correo)
+    for ejemplo in ejemplos:
+        resultado = validar_correo(ejemplo)
 
         estado = (
             "ACEPTADO"
@@ -140,19 +253,13 @@ if __name__ == "__main__":
             else "RECHAZADO"
         )
 
-        print(repr(correo), "=>", estado)
-
-        if resultado["aceptado"] != esperado:
-            raise AssertionError(
-                f"Resultado inesperado: {correo}"
-            )
+        print(
+            repr(ejemplo),
+            "=>",
+            estado
+        )
 
         if not resultado["coincide_regex"]:
             raise AssertionError(
-                f"El AFD no coincide con la ER: {correo}"
+                f"Inconsistencia entre AFD y ER: {ejemplo}"
             )
-
-    print("\nTodas las pruebas fueron correctas.")
-    print("Graficos generados:")
-    print("ejemplos/afnd_correo.svg")
-    print("ejemplos/afd_correo.svg")
