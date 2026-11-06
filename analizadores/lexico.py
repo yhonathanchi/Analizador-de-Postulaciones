@@ -207,6 +207,18 @@ def analizar_lexico(contenido):
                 )
                 continue
 
+            tokens.append({
+                "token": "TK_CAMPO",
+                "lexema": campo,
+                "linea": numero_linea
+            })
+
+            tokens.append({
+                "token": "TK_DOS_PUNTOS",
+                "lexema": ":",
+                "linea": numero_linea
+            })
+
             resultado = validar_valor(
                 campo,
                 valor
@@ -227,18 +239,6 @@ def analizar_lexico(contenido):
                     f"formato inválido para {campo}"
                 )
                 continue
-
-            tokens.append({
-                "token": "TK_CAMPO",
-                "lexema": campo,
-                "linea": numero_linea
-            })
-
-            tokens.append({
-                "token": "TK_DOS_PUNTOS",
-                "lexema": ":",
-                "linea": numero_linea
-            })
 
             tipo_valor = (
                 "TK_DNI"
