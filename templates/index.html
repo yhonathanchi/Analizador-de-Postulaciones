@@ -657,7 +657,11 @@ PUESTO: Asistente administrativo
         </p>
 
         {% if sintaxis.valido and sintaxis.arbol %}
-        <h3>Árbol de derivación</h3>
+        <h3>Árbol sintáctico</h3>
+        <p>
+          El árbol representa gráficamente la derivación de la cadena válida
+          según las producciones de la gramática.
+        </p>
 
         {% macro mostrar_nodo(nodo) %}
         <li>
@@ -728,7 +732,7 @@ PUESTO: Asistente administrativo
       </section>
     </main>
 
-    <script src="{{ url_for('javascript_automatas') }}?v=tokens3"></script>
+    <script src="{{ url_for('javascript_automatas') }}?v=tokens4"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const opciones = document.querySelectorAll('input[name="modo_visual"]');
