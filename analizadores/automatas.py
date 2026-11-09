@@ -17,8 +17,7 @@ TOKENS_RESERVADOS = {
         "INSTITUCION",
         "PUESTO"
     ),
-    "TK_ABRE": ("{",),
-    "TK_CIERRA": ("}",),
+    "TK_LLAVE": ("{", "}"),
     "TK_DOS_PUNTOS": (":",)
 }
 
