@@ -222,8 +222,7 @@ if __name__ == "__main__":
         "PUESTO": "Asistente administrativo",
         "TK_SECCION": "DATOS_PERSONALES",
         "TK_CAMPO": "NOMBRE",
-        "TK_ABRE": "{",
-        "TK_CIERRA": "}",
+        "TK_LLAVE": "{",
         "TK_DOS_PUNTOS": ":"
     }
 
