@@ -7,23 +7,23 @@ GRAMATICA = {
     ],
     "DP": [
         ("TK_SECCION", "DATOS_PERSONALES"),
-        ("TK_ABRE", "{"),
+        ("TK_LLAVE", "{"),
         "CN",
         "CD",
         "CC",
-        ("TK_CIERRA", "}")
+        ("TK_LLAVE", "}")
     ],
     "ED": [
         ("TK_SECCION", "EDUCACION"),
-        ("TK_ABRE", "{"),
+        ("TK_LLAVE", "{"),
         "CI",
-        ("TK_CIERRA", "}")
+        ("TK_LLAVE", "}")
     ],
     "EX": [
         ("TK_SECCION", "EXPERIENCIA"),
-        ("TK_ABRE", "{"),
+        ("TK_LLAVE", "{"),
         "CP",
-        ("TK_CIERRA", "}")
+        ("TK_LLAVE", "}")
     ],
     "CN": [
         ("TK_CAMPO", "NOMBRE"),
