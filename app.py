@@ -332,62 +332,56 @@ def inicio():
         for campo in ORDEN_CAMPOS
     ]
 
-    agrupadores = [
-        (
-            "TK_SECCION",
-            "DATOS_PERSONALES, EDUCACION, EXPERIENCIA",
-            "Secciones"
-        ),
-        (
-            "TK_CAMPO",
-            "NOMBRE, DNI, CORREO, INSTITUCION, PUESTO",
-            "Identificadores"
-        ),
-        (
-            "TK_LLAVE",
-            "{, }",
-            "Delimitador"
-        ),
-        (
-            "TK_DOS_PUNTOS",
-            ":",
-            "Separador"
-        ),
-        (
-            "TK_DNI",
-            "Valores de ocho dígitos",
-            "Valor numérico"
-        ),
-        (
-            "TK_CORREO",
-            "Valores de correo",
-            "Valor"
-        ),
-        (
-            "TK_TEXTO",
-            "Valores de texto",
-            "Valor"
-        )
-    ]
-
     tokens_agrupados = [
         {
-            "token": token,
-            "definicion": definicion,
-            "funcion": funcion,
-            "cantidad": sum(
-                t["token"] == token
-                for t in tokens
-            ),
-            "lexemas": list(
-                dict.fromkeys(
-                    t["lexema"]
-                    for t in tokens
-                    if t["token"] == token
-                )
-            )
+            "token": "TK_SECCION",
+            "lexemas": "DATOS_PERSONALES, EDUCACION, EXPERIENCIA",
+            "regex": "^(DATOS_PERSONALES|EDUCACION|EXPERIENCIA)$",
+            "lenguaje": 'L = {"DATOS_PERSONALES", "EDUCACION", "EXPERIENCIA"}',
+            "conjuntos": '{ x ∈ Σ* | x = "DATOS_PERSONALES" ∨ x = "EDUCACION" ∨ x = "EXPERIENCIA" }'
+        },
+        {
+            "token": "TK_CAMPO",
+            "lexemas": "NOMBRE, DNI, CORREO, INSTITUCION, PUESTO",
+            "regex": "^(NOMBRE|DNI|CORREO|INSTITUCION|PUESTO)$",
+            "lenguaje": 'L = {"NOMBRE", "DNI", "CORREO", "INSTITUCION", "PUESTO"}',
+            "conjuntos": '{ x ∈ Σ* | x = "NOMBRE" ∨ x = "DNI" ∨ x = "CORREO" ∨ x = "INSTITUCION" ∨ x = "PUESTO" }'
+        },
+        {
+            "token": "TK_LLAVE",
+            "lexemas": "{, }",
+            "regex": "^[{}]$",
+            "lenguaje": 'L = {"{", "}"}',
+            "conjuntos": '{ x ∈ Σ* | x = "{" ∨ x = "}" }'
+        },
+        {
+            "token": "TK_DOS_PUNTOS",
+            "lexemas": ":",
+            "regex": "^:$",
+            "lenguaje": 'L = {":"}',
+            "conjuntos": '{ x ∈ Σ* | x = ":" }'
+        },
+        {
+            "token": "TK_DNI",
+            "lexemas": "8 dígitos",
+            "regex": "^[0-9]{8}$",
+            "lenguaje": "L = { d₁d₂...d₈ | dᵢ ∈ {0,1,2,3,4,5,6,7,8,9} }",
+            "conjuntos": "{ x ∈ {0,1,2,3,4,5,6,7,8,9}⁸ }"
+        },
+        {
+            "token": "TK_CORREO",
+            "lexemas": "usuario@dominio.extensión",
+            "regex": PATRONES["CORREO"],
+            "lenguaje": "L = { usuario@dominio.ext | usuario, dominio y ext cumplen sus alfabetos }",
+            "conjuntos": "{ x ∈ Σ* | x cumple la estructura usuario@dominio.extensión y |ext| ≥ 2 }"
+        },
+        {
+            "token": "TK_TEXTO",
+            "lexemas": "NOMBRE, INSTITUCION y PUESTO",
+            "regex": "Según el campo: NOMBRE | INSTITUCION | PUESTO",
+            "lenguaje": "L = L(NOMBRE) ∪ L(INSTITUCION) ∪ L(PUESTO)",
+            "conjuntos": "{ x ∈ Σ* | x cumple el patrón permitido para su campo }"
         }
-        for token, definicion, funcion in agrupadores
     ]
 
     return render_template(
