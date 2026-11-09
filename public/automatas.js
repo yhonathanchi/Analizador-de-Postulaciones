@@ -440,6 +440,143 @@ function posiciones(a) {
   );
 }
 
+
+function vistaTokenLegible(a, id, grupos, nombres) {
+  const sumidero = sumideroDe(a);
+
+  const visibles = [...a.estados]
+    .filter((estado) => estado !== sumidero)
+    .sort(ordenar);
+
+  const gruposVisibles = grupos.filter(
+    (g) => g.origen !== sumidero && g.destino !== sumidero,
+  );
+
+  const salidas = new Map();
+
+  for (const g of gruposVisibles) {
+    if (!salidas.has(g.origen)) {
+      salidas.set(g.origen, []);
+    }
+    salidas.get(g.origen).push(g);
+  }
+
+  const nivel = new Map([[a.inicial, 0]]);
+  const cola = [a.inicial];
+
+  while (cola.length) {
+    const actual = cola.shift();
+    const base = nivel.get(actual);
+
+    for (const g of salidas.get(actual) || []) {
+      const siguiente = base + 1;
+
+      if (!nivel.has(g.destino) || siguiente < nivel.get(g.destino)) {
+        nivel.set(g.destino, siguiente);
+        cola.push(g.destino);
+      }
+    }
+  }
+
+  const porNivel = new Map();
+
+  for (const estado of visibles) {
+    const n = nivel.get(estado) ?? 0;
+
+    if (!porNivel.has(n)) {
+      porNivel.set(n, []);
+    }
+
+    porNivel.get(n).push(estado);
+  }
+
+  const niveles = [...porNivel.keys()].sort((x, y) => x - y);
+  const maxNivel = Math.max(...niveles, 0);
+  const maxFilas = Math.max(
+    ...[...porNivel.values()].map((lista) => lista.length),
+    1,
+  );
+
+  const ancho = Math.max(760, 170 + maxNivel * 120);
+  const alto = Math.max(360, 120 + maxFilas * 105);
+  const d = marco(id, ancho, alto);
+  const pos = new Map();
+
+  for (const n of niveles) {
+    const lista = porNivel.get(n).sort(ordenar);
+    const paso = alto / (lista.length + 1);
+
+    lista.forEach((estado, indice) => {
+      pos.set(estado, {
+        x: 90 + n * ((ancho - 180) / Math.max(maxNivel, 1)),
+        y: paso * (indice + 1),
+      });
+    });
+  }
+
+  const inicial = pos.get(a.inicial);
+
+  if (inicial) {
+    flecha(
+      d,
+      id,
+      `M${inicial.x - 62} ${inicial.y} L${inicial.x - 34} ${inicial.y}`,
+    );
+    texto(d, inicial.x - 48, inicial.y - 15, "inicio", 11);
+  }
+
+  for (const g of gruposVisibles) {
+    const p = pos.get(g.origen);
+    const q = pos.get(g.destino);
+
+    if (!p || !q) continue;
+
+    const dx = q.x - p.x;
+    const dy = q.y - p.y;
+    const longitud = Math.hypot(dx, dy);
+
+    if (!longitud) continue;
+
+    const ux = dx / longitud;
+    const uy = dy / longitud;
+
+    const x1 = p.x + ux * 34;
+    const y1 = p.y + uy * 34;
+    const x2 = q.x - ux * 36;
+    const y2 = q.y - uy * 36;
+
+    flecha(
+      d,
+      id,
+      `M${x1} ${y1} L${x2} ${y2}`,
+      "normal",
+      g.simbolos.includes("ε"),
+    );
+
+    texto(
+      d,
+      (x1 + x2) / 2,
+      (y1 + y2) / 2 - 10,
+      nombres.get(g),
+      11,
+    );
+  }
+
+  for (const estado of visibles) {
+    const p = pos.get(estado);
+
+    if (p) {
+      nodo(d, estado, p, a, false);
+    }
+  }
+
+  return {
+    d,
+    dibujados: gruposVisibles,
+    ocultoSumidero: Boolean(sumidero),
+  };
+}
+
 function vistaBasica(a, id, grupos, nombres) {
   const alto =
     a.campo === "DNI"
@@ -772,9 +909,15 @@ function dibujarAutomata(a, id) {
   const completo =
     a.campo === "CORREO" && a.tipo === "AFD" && a.estados.length === 8;
 
+  const tokenGrande =
+    (a.campo === "TK_SECCION" || a.campo === "TK_CAMPO") &&
+    a.estados.length > 8;
+
   const dibujo = completo
     ? vistaCorreoAFD(a, id, grupos, nombres)
-    : vistaBasica(a, id, grupos, nombres);
+    : tokenGrande
+      ? vistaTokenLegible(a, id, grupos, nombres)
+      : vistaBasica(a, id, grupos, nombres);
 
   const lienzo = html(
     "div",
@@ -786,13 +929,22 @@ function dibujarAutomata(a, id) {
   cont.appendChild(lienzo);
 
   let nota =
-    "Los símbolos C1, C2, etc. se definen " + "en la tabla de transiciones.";
+    "El gráfico muestra las transiciones del autómata y la tabla inferior conserva el detalle completo.";
 
   if (a.campo === "DNI") {
     nota =
       "Cada transición de dígito acepta 0,1,2,3,4,5,6,7,8,9. " +
       "Cada transición consume un dígito; " +
       "ε no consume caracteres.";
+  }
+
+  if (
+    (a.campo === "TK_SECCION" || a.campo === "TK_CAMPO") &&
+    dibujo.ocultoSumidero
+  ) {
+    nota =
+      "Vista legible tipo JFLAP: se muestran las rutas que pueden llegar a aceptación. " +
+      "El estado sumidero y las transiciones de rechazo se conservan en la tabla completa.";
   }
 
   if (a.campo === "CORREO" && a.tipo === "AFND") {
