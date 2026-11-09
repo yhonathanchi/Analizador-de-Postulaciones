@@ -354,16 +354,10 @@ PUESTO: Asistente administrativo
                 <td>AFND y AFD de PUESTO</td>
               </tr>
               <tr>
-                <td><code>TK_ABRE</code></td>
-                <td>{</td>
-                <td>Símbolo literal de apertura</td>
-                <td>Delimitador de apertura</td>
-              </tr>
-              <tr>
-                <td><code>TK_CIERRA</code></td>
-                <td>}</td>
-                <td>Símbolo literal de cierre</td>
-                <td>Delimitador de cierre</td>
+                <td><code>TK_LLAVE</code></td>
+                <td>{, }</td>
+                <td><code>[{}]</code></td>
+                <td>Delimitador de bloque</td>
               </tr>
               <tr>
                 <td><code>TK_DOS_PUNTOS</code></td>
@@ -464,8 +458,7 @@ PUESTO: Asistente administrativo
             </optgroup>
 
             <optgroup label="Delimitadores del DSL">
-              <option value="TK_ABRE">TK_ABRE — {</option>
-              <option value="TK_CIERRA">TK_CIERRA — }</option>
+              <option value="TK_LLAVE">TK_LLAVE — {, }</option>
               <option value="TK_DOS_PUNTOS">TK_DOS_PUNTOS — :</option>
             </optgroup>
 
@@ -735,7 +728,7 @@ PUESTO: Asistente administrativo
       </section>
     </main>
 
-    <script src="{{ url_for('javascript_automatas') }}?v=tokens2"></script>
+    <script src="{{ url_for('javascript_automatas') }}?v=tokens3"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const opciones = document.querySelectorAll('input[name="modo_visual"]');
