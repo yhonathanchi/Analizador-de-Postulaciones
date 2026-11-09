@@ -149,8 +149,12 @@ function estilos() {
         overflow: visible;
       }
 
+      .comparacion-automatas.correo-amplio {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
       .comparacion-automatas.correo-amplio
-      .tarjeta-automata:nth-child(2) {
+      .tarjeta-automata {
         grid-column: 1 / -1;
       }
 
@@ -175,9 +179,9 @@ function estilos() {
       }
 
       .lienzo-automata.correo svg {
-        width: 1550px !important;
-        min-width: 1550px !important;
-        max-width: none !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
       }
 
       .nota-automata {
@@ -1235,7 +1239,7 @@ function dibujarAutomata(a, id) {
   const lienzo = html(
     "div",
     "",
-    "lienzo-automata" + (completo ? " correo" : ""),
+    "lienzo-automata" + (a.campo === "CORREO" ? " correo" : ""),
   );
 
   lienzo.appendChild(dibujo.d);
