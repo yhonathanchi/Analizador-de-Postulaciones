@@ -456,6 +456,32 @@ function posiciones(a) {
 
 
 
+function etiquetaCorreoCompacta(grupo) {
+  const s = new Set(grupo.simbolos);
+
+  if (grupo.simbolos.length === 1) {
+    return grupo.simbolos[0];
+  }
+
+  const usuario = [...MAYUSCULAS, ...MINUSCULAS, ...DIGITOS, ".", "_", "%", "+", "-"];
+  const dominio = [...MAYUSCULAS, ...MINUSCULAS, ...DIGITOS, ".", "-"];
+  const letras = [...MAYUSCULAS, ...MINUSCULAS];
+
+  if (usuario.every((x) => s.has(x)) && s.size === usuario.length) {
+    return "U";
+  }
+
+  if (dominio.every((x) => s.has(x)) && s.size === dominio.length) {
+    return "D";
+  }
+
+  if (letras.every((x) => s.has(x)) && s.size === letras.length) {
+    return "L";
+  }
+
+  return etiqueta(grupo, 0);
+}
+
 function vistaCorreoCompacta(a, id, grupos, nombres) {
   const sumidero = sumideroDe(a);
 
@@ -617,7 +643,7 @@ function vistaCampoCompacta(a, id, grupos, nombres) {
     const q = pos.get(g.destino);
     if (!p || !q) continue;
 
-    const et = nombres.get(g);
+    const et = a.campo === "CORREO" ? etiquetaCorreoCompacta(g) : nombres.get(g);
 
     if (g.origen === g.destino) {
       flecha(
@@ -1281,8 +1307,8 @@ function dibujarAutomata(a, id) {
 
   if (a.campo === "CORREO") {
     nota =
-      "Vista compacta del correo: se muestran las etapas usuario, @, dominio, punto y extensión. " +
-      "Las transiciones de rechazo del AFD se conservan en la tabla completa.";
+      "U = letras, dígitos y . _ % + - en el usuario; D = letras, dígitos, punto y guion en el dominio; " +
+      "L = letras A-Z y a-z. La tabla inferior conserva los símbolos exactos y las transiciones completas.";
   }
 
   if (completo) {
