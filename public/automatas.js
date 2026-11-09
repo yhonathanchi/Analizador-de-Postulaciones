@@ -442,6 +442,118 @@ function posiciones(a) {
 
 
 
+
+function vistaCorreoCompacta(a, id, grupos, nombres) {
+  const sumidero = sumideroDe(a);
+
+  const principales = new Set([
+    "q0/q1",
+    "q1/q1",
+    "q1/q2",
+    "q2/q2",
+    "q2/q3",
+    "q3/q4",
+    "q4/q4",
+    "q4/q5",
+    "q5/q6",
+    "q6/q7",
+    "q7/q7",
+    "q1/q3",
+  ]);
+
+  const visibles = grupos.filter((g) => {
+    if (g.origen === sumidero || g.destino === sumidero) return false;
+    return principales.has(`${g.origen}/${g.destino}`);
+  });
+
+  const ordenEstados =
+    a.tipo === "AFND"
+      ? ["q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7"]
+      : ["q0", "q1", "q3", "q4", "q5", "q6", "q7"];
+
+  const ancho = 1040;
+  const alto = 350;
+  const d = marco(id, ancho, alto);
+  const pos = new Map();
+
+  const inicioX = 90;
+  const finX = 950;
+  const paso = (finX - inicioX) / Math.max(ordenEstados.length - 1, 1);
+
+  ordenEstados.forEach((estado, i) => {
+    pos.set(estado, {
+      x: inicioX + i * paso,
+      y: 185,
+    });
+  });
+
+  const inicial = pos.get(a.inicial);
+
+  if (inicial) {
+    flecha(
+      d,
+      id,
+      `M${inicial.x - 62} ${inicial.y} L${inicial.x - 35} ${inicial.y}`,
+    );
+    texto(d, inicial.x - 48, inicial.y - 16, "inicio", 11);
+  }
+
+  for (const g of visibles) {
+    const p = pos.get(g.origen);
+    const q = pos.get(g.destino);
+
+    if (!p || !q) continue;
+
+    const et = nombres.get(g);
+
+    if (g.origen === g.destino) {
+      flecha(
+        d,
+        id,
+        `M${p.x - 18} ${p.y - 25} C${p.x - 66} ${p.y - 94}, ${p.x + 66} ${p.y - 94}, ${p.x + 18} ${p.y - 25}`,
+      );
+      texto(d, p.x, p.y - 78, et, 11);
+      continue;
+    }
+
+    const dx = q.x - p.x;
+    const dy = q.y - p.y;
+    const l = Math.hypot(dx, dy);
+
+    if (!l) continue;
+
+    const ux = dx / l;
+    const uy = dy / l;
+
+    const x1 = p.x + ux * 34;
+    const y1 = p.y + uy * 34;
+    const x2 = q.x - ux * 36;
+    const y2 = q.y - uy * 36;
+
+    flecha(
+      d,
+      id,
+      `M${x1} ${y1} L${x2} ${y2}`,
+      "normal",
+      g.simbolos.includes("ε"),
+    );
+
+    texto(d, (x1 + x2) / 2, (y1 + y2) / 2 - 16, et, 11);
+  }
+
+  for (const estado of ordenEstados) {
+    const p = pos.get(estado);
+    if (p) nodo(d, estado, p, a, false);
+  }
+
+  return {
+    d,
+    dibujados: visibles,
+    ocultoSumidero: Boolean(sumidero),
+    correoCompacto: true,
+  };
+}
+
 function vistaCampoCompacta(a, id, grupos, nombres) {
   const sumidero = sumideroDe(a);
   const visibles = grupos.filter(
@@ -1095,8 +1207,8 @@ function dibujarAutomata(a, id) {
     ? vistaTokenPorLexemas(a, id, grupos, nombres)
     : campoTexto
       ? vistaCampoCompacta(a, id, grupos, nombres)
-      : completo
-        ? vistaBasica(a, id, grupos, nombres)
+      : a.campo === "CORREO"
+        ? vistaCorreoCompacta(a, id, grupos, nombres)
         : vistaBasica(a, id, grupos, nombres);
 
   const lienzo = html(
@@ -1136,11 +1248,10 @@ function dibujarAutomata(a, id) {
       "El estado sumidero del AFD se mantiene en la tabla completa.";
   }
 
-  if (a.campo === "CORREO" && a.tipo === "AFND") {
+  if (a.campo === "CORREO") {
     nota =
-      "AFND: ruta principal visible. " +
-      "Todas las transiciones figuran " +
-      "en la tabla completa.";
+      "Vista compacta del correo: se muestran las etapas usuario, @, dominio, punto y extensión. " +
+      "Las transiciones de rechazo del AFD se conservan en la tabla completa.";
   }
 
   if (completo) {
