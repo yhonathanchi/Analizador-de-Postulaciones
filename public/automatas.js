@@ -818,10 +818,29 @@ function mostrarTablaTransiciones(a, id) {
 
   t.replaceChildren();
 
-  for (const g of gruposDe(a.transiciones)) {
+  const grupos = gruposDe(a.transiciones);
+  const estadosConSalida = new Set();
+
+  for (const g of grupos) {
+    estadosConSalida.add(g.origen);
+
     const tr = html("tr");
 
     for (const v of [g.origen, g.simbolos.map(simbolo).join(", "), g.destino]) {
+      tr.appendChild(html("td", v));
+    }
+
+    t.appendChild(tr);
+  }
+
+  for (const estado of [...a.estados].sort(ordenar)) {
+    if (estadosConSalida.has(estado)) {
+      continue;
+    }
+
+    const tr = html("tr");
+
+    for (const v of [estado, "—", "—"]) {
       tr.appendChild(html("td", v));
     }
 
