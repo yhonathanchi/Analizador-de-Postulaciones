@@ -61,7 +61,7 @@ function etiqueta(g, i) {
     g.simbolos.length === 10 &&
     DIGITOS.every((d) => g.simbolos.includes(d))
   ) {
-    return "D";
+    return DIGITOS.join(",");
   }
 
   if (g.simbolos.length <= 3) {
@@ -747,8 +747,8 @@ function dibujarAutomata(a, id) {
 
   if (a.campo === "DNI") {
     nota =
-      "D = {0,1,2,3,4,5,6,7,8,9}. " +
-      "Cada D consume un dígito; " +
+      "Cada transición de dígito acepta 0,1,2,3,4,5,6,7,8,9. " +
+      "Cada transición consume un dígito; " +
       "ε no consume caracteres.";
   }
 
@@ -1367,8 +1367,7 @@ function visualizarAFDCorreoInteractivo(automata) {
 const PALABRAS_TOKEN = {
   TK_SECCION: ["DATOS_PERSONALES", "EDUCACION", "EXPERIENCIA"],
   TK_CAMPO: ["NOMBRE", "DNI", "CORREO", "INSTITUCION", "PUESTO"],
-  TK_ABRE: ["{"],
-  TK_CIERRA: ["}"],
+  TK_LLAVE: ["{", "}"],
   TK_DOS_PUNTOS: [":"],
 };
 
