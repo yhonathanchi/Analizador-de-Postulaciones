@@ -8,14 +8,30 @@
   </head>
   <body>
     <header class="encabezado">
-      <h1>Mini compilador de postulaciones laborales</h1>
-      <p>
-        Sistema de validación estructural mediante análisis léxico y sintáctico
-      </p>
+      <div class="encabezado-contenido">
+        <div>
+          <span class="etiqueta-proyecto">Teoría de la Computación</span>
+          <h1>Mini compilador de postulaciones laborales</h1>
+          <p>
+            Validación de un DSL mediante análisis léxico, sintáctico y autómatas finitos
+          </p>
+        </div>
+        <div class="estado-proyecto">
+          <span>DSL</span>
+          <span>AFND / AFD</span>
+          <span>Gramática</span>
+        </div>
+      </div>
     </header>
 
+    <nav class="navegacion-proyecto" aria-label="Secciones del proyecto">
+      <a href="#caso"><strong>A</strong><span>Caso</span></a>
+      <a href="#resultado"><strong>B</strong><span>Resultado</span></a>
+      <a href="#analisis-lexico"><strong>C</strong><span>Proceso interno</span></a>
+    </nav>
+
     <main>
-      <section class="panel" id="caso">
+      <section class="panel panel-destacado" id="caso">
         <h2>A. Caso: proceso de postulación laboral</h2>
 
         <h3>Problema que se busca resolver</h3>
@@ -204,7 +220,7 @@ PUESTO: Asistente administrativo
         </details>
       </section>
 
-      <section class="panel" id="resultado">
+      <section class="panel panel-resultado" id="resultado">
         <h2>B. Resultado de la postulación</h2>
 
         {% if errores %}
@@ -249,7 +265,7 @@ PUESTO: Asistente administrativo
         {% endif %}
       </section>
 
-      <section class="panel" id="analisis-lexico">
+      <section class="panel panel-proceso" id="analisis-lexico">
         <h2>C. Proceso interno del mini compilador</h2>
 
         <h3>3.1 Análisis léxico</h3>
@@ -732,7 +748,7 @@ PUESTO: Asistente administrativo
       </section>
     </main>
 
-    <script src="{{ url_for('javascript_automatas') }}?v=tokens4"></script>
+    <script src="{{ url_for('javascript_automatas') }}?v=tokens5"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const opciones = document.querySelectorAll('input[name="modo_visual"]');
