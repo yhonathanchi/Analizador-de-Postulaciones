@@ -123,25 +123,13 @@ def analizar_lexico(contenido):
                 })
                 continue
 
-        if linea == "{":
+        if linea in ("{", "}"):
             if validar_token_reservado(
-                "TK_ABRE",
+                "TK_LLAVE",
                 linea
             ):
                 tokens.append({
-                    "token": "TK_ABRE",
-                    "lexema": linea,
-                    "linea": numero_linea
-                })
-                continue
-
-        if linea == "}":
-            if validar_token_reservado(
-                "TK_CIERRA",
-                linea
-            ):
-                tokens.append({
-                    "token": "TK_CIERRA",
+                    "token": "TK_LLAVE",
                     "lexema": linea,
                     "linea": numero_linea
                 })
@@ -157,7 +145,7 @@ def analizar_lexico(contenido):
                     seccion
                 )
                 and validar_token_reservado(
-                    "TK_ABRE",
+                    "TK_LLAVE",
                     "{"
                 )
             ):
@@ -168,7 +156,7 @@ def analizar_lexico(contenido):
                 })
 
                 tokens.append({
-                    "token": "TK_ABRE",
+                    "token": "TK_LLAVE",
                     "lexema": "{",
                     "linea": numero_linea
                 })
