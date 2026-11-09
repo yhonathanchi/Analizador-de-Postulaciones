@@ -163,6 +163,15 @@ function estilos() {
         display: block;
         width: 100%;
         height: auto;
+        min-height: 330px;
+      }
+
+      .comparacion-automatas .tarjeta-automata {
+        min-height: 520px;
+      }
+
+      .comparacion-automatas .contenedor-automata {
+        min-height: 430px;
       }
 
       .lienzo-automata.correo svg {
@@ -471,19 +480,19 @@ function vistaCorreoCompacta(a, id, grupos, nombres) {
       ? ["q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7"]
       : ["q0", "q1", "q3", "q4", "q5", "q6", "q7"];
 
-  const ancho = 1040;
-  const alto = 350;
+  const ancho = 1320;
+  const alto = 430;
   const d = marco(id, ancho, alto);
   const pos = new Map();
 
-  const inicioX = 90;
-  const finX = 950;
+  const inicioX = 115;
+  const finX = 1205;
   const paso = (finX - inicioX) / Math.max(ordenEstados.length - 1, 1);
 
   ordenEstados.forEach((estado, i) => {
     pos.set(estado, {
       x: inicioX + i * paso,
-      y: 185,
+      y: 220,
     });
   });
 
@@ -512,7 +521,7 @@ function vistaCorreoCompacta(a, id, grupos, nombres) {
         id,
         `M${p.x - 18} ${p.y - 25} C${p.x - 66} ${p.y - 94}, ${p.x + 66} ${p.y - 94}, ${p.x + 18} ${p.y - 25}`,
       );
-      texto(d, p.x, p.y - 78, et, 11);
+      texto(d, p.x, p.y - 92, et, 15);
       continue;
     }
 
@@ -538,7 +547,7 @@ function vistaCorreoCompacta(a, id, grupos, nombres) {
       g.simbolos.includes("ε"),
     );
 
-    texto(d, (x1 + x2) / 2, (y1 + y2) / 2 - 16, et, 11);
+    texto(d, (x1 + x2) / 2, (y1 + y2) / 2 - 22, et, 15);
   }
 
   for (const estado of ordenEstados) {
@@ -572,7 +581,7 @@ function vistaCampoCompacta(a, id, grupos, nombres) {
     (g) => g.origen !== sumidero && g.destino !== sumidero,
   );
 
-  const d = marco(id, 700, 300);
+  const d = marco(id, 920, 360);
 
   const estados = [...a.estados]
     .filter((estado) => estado !== sumidero)
@@ -583,12 +592,12 @@ function vistaCampoCompacta(a, id, grupos, nombres) {
   if (a.tipo === "AFND") {
     const orden = estados.slice(0, 3);
     orden.forEach((estado, i) => {
-      pos.set(estado, { x: 115 + i * 220, y: 145 });
+      pos.set(estado, { x: 150 + i * 310, y: 180 });
     });
   } else {
     const orden = estados.slice(0, 2);
     orden.forEach((estado, i) => {
-      pos.set(estado, { x: 180 + i * 330, y: 145 });
+      pos.set(estado, { x: 220 + i * 460, y: 180 });
     });
   }
 
@@ -612,7 +621,7 @@ function vistaCampoCompacta(a, id, grupos, nombres) {
         id,
         `M${p.x - 20} ${p.y - 25} C${p.x - 85} ${p.y - 105}, ${p.x + 85} ${p.y - 105}, ${p.x + 20} ${p.y - 25}`,
       );
-      texto(d, p.x, p.y - 88, et, 12);
+      texto(d, p.x, p.y - 105, et, 16);
       continue;
     }
 
@@ -634,7 +643,7 @@ function vistaCampoCompacta(a, id, grupos, nombres) {
       "normal",
       g.simbolos.includes("ε"),
     );
-    texto(d, (x1 + x2) / 2, (y1 + y2) / 2 - 18, et, 12);
+    texto(d, (x1 + x2) / 2, (y1 + y2) / 2 - 24, et, 16);
   }
 
   for (const estado of estados) {
