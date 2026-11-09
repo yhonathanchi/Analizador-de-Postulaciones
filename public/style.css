@@ -291,31 +291,100 @@ td code {
 
 .arbol-derivacion {
   overflow-x: auto;
-  padding: 18px;
+  padding: 24px 18px 32px;
   background: #f7fafc;
   border: 1px solid #dbe4ed;
   border-radius: 10px;
 }
 
+.arbol-derivacion > ul {
+  min-width: max-content;
+}
+
 .arbol-derivacion ul {
+  display: flex;
+  justify-content: center;
+  position: relative;
   list-style: none;
   margin: 0;
-  padding: 0 0 0 22px;
-  border-left: 1px solid #9bb4cf;
+  padding: 22px 0 0;
 }
 
 .arbol-derivacion li {
-  margin: 6px 0;
-  padding-left: 8px;
+  position: relative;
+  text-align: center;
+  padding: 22px 6px 0;
+}
+
+.arbol-derivacion li::before,
+.arbol-derivacion li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 22px;
+  border-top: 1px solid #8ea8c4;
+}
+
+.arbol-derivacion li::before {
+  right: 50%;
+}
+
+.arbol-derivacion li::after {
+  left: 50%;
+  border-left: 1px solid #8ea8c4;
+}
+
+.arbol-derivacion li:only-child::before,
+.arbol-derivacion li:only-child::after {
+  display: none;
+}
+
+.arbol-derivacion li:only-child {
+  padding-top: 0;
+}
+
+.arbol-derivacion li:first-child::before,
+.arbol-derivacion li:last-child::after {
+  border-top: none;
+}
+
+.arbol-derivacion li:last-child::before {
+  border-right: 1px solid #8ea8c4;
+  border-radius: 0 6px 0 0;
+}
+
+.arbol-derivacion li:first-child::after {
+  border-radius: 6px 0 0 0;
+}
+
+.arbol-derivacion ul ul::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 22px;
+  border-left: 1px solid #8ea8c4;
 }
 
 .arbol-derivacion li > span {
-  background: #e7f0fc;
-  border-radius: 5px;
   display: inline-block;
-  padding: 4px 8px;
+  min-width: 54px;
+  max-width: 180px;
+  padding: 6px 9px;
+  background: #e7f0fc;
+  border: 1px solid #a9c2dc;
+  border-radius: 7px;
   color: #15375f;
-  font-family: monospace;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.arbol-derivacion > ul > li > span {
+  background: #dff7e8;
+  border-color: #78b993;
+  font-weight: bold;
 }
 
 .boton-descarga {
@@ -455,7 +524,7 @@ td code {
     grid-column: auto;
   }
 }
-<CodeBlock language="css" editable > .leyenda-diagrama {
+.leyenda-diagrama {
   margin: 12px 0;
   padding: 12px;
   background: #f0f6fc;
