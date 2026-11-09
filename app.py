@@ -344,13 +344,8 @@ def inicio():
             "Identificadores"
         ),
         (
-            "TK_ABRE",
-            "{",
-            "Delimitador"
-        ),
-        (
-            "TK_CIERRA",
-            "}",
+            "TK_LLAVE",
+            "{, }",
             "Delimitador"
         ),
         (
