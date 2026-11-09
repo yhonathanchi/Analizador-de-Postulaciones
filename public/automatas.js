@@ -1,5 +1,8 @@
 const NS = "http://www.w3.org/2000/svg";
 const DIGITOS = [..."0123456789"];
+const MAYUSCULAS = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+const MINUSCULAS = [..."abcdefghijklmnopqrstuvwxyz"];
+const ACENTUADAS = [..."ÁÉÍÓÚáéíóúÑñÜü"];
 
 function html(tag, texto = "", clase = "") {
   const e = document.createElement(tag);
@@ -52,6 +55,10 @@ function gruposDe(transiciones) {
     );
 }
 
+function contieneTodos(simbolos, conjunto) {
+  return conjunto.every((simbolo) => simbolos.includes(simbolo));
+}
+
 function etiqueta(g, i) {
   if (g.simbolos.length === 1) {
     return g.simbolos[0] === " " ? "␠" : g.simbolos[0];
@@ -59,16 +66,45 @@ function etiqueta(g, i) {
 
   if (
     g.simbolos.length === 10 &&
-    DIGITOS.every((d) => g.simbolos.includes(d))
+    contieneTodos(g.simbolos, DIGITOS)
   ) {
     return DIGITOS.join(",");
   }
 
-  if (g.simbolos.length <= 3) {
-    return g.simbolos.join(", ");
+  const partes = [];
+  const restantes = new Set(g.simbolos);
+
+  if (contieneTodos(g.simbolos, MAYUSCULAS)) {
+    partes.push("A-Z");
+    MAYUSCULAS.forEach((s) => restantes.delete(s));
   }
 
-  return `C${i + 1}`;
+  if (contieneTodos(g.simbolos, MINUSCULAS)) {
+    partes.push("a-z");
+    MINUSCULAS.forEach((s) => restantes.delete(s));
+  }
+
+  if (contieneTodos(g.simbolos, DIGITOS)) {
+    partes.push("0-9");
+    DIGITOS.forEach((s) => restantes.delete(s));
+  }
+
+  if (contieneTodos(g.simbolos, ACENTUADAS)) {
+    partes.push("ÁÉÍÓÚáéíóúÑñÜü");
+    ACENTUADAS.forEach((s) => restantes.delete(s));
+  }
+
+  const extras = [...restantes].map((s) => (s === " " ? "␠" : s));
+
+  if (partes.length > 0) {
+    return [...partes, ...extras].join(",");
+  }
+
+  if (g.simbolos.length <= 12) {
+    return g.simbolos.map((s) => (s === " " ? "␠" : s)).join(",");
+  }
+
+  return g.simbolos.map((s) => (s === " " ? "␠" : s)).join(",");
 }
 
 function estilos() {
@@ -405,7 +441,14 @@ function posiciones(a) {
 }
 
 function vistaBasica(a, id, grupos, nombres) {
-  const alto = a.campo === "DNI" ? 660 : a.campo === "CORREO" ? 570 : 320;
+  const alto =
+    a.campo === "DNI"
+      ? 660
+      : a.campo === "CORREO"
+        ? 570
+        : a.campo.startsWith("TK_")
+          ? Math.max(320, 220 + Math.ceil(a.estados.length / 3) * 155)
+          : 320;
 
   const d = marco(id, 530, alto);
 
@@ -1650,50 +1693,7 @@ function actualizarRutaToken() {
 const dibujarAutomataAnterior = dibujarAutomata;
 
 dibujarAutomata = function (a, id) {
-  if (!Object.prototype.hasOwnProperty.call(PALABRAS_TOKEN, a.campo)) {
-    return dibujarAutomataAnterior(a, id);
-  }
-
-  if (automatasTokenActuales.campo !== a.campo) {
-    automatasTokenActuales = {
-      campo: a.campo,
-    };
-
-    palabraTokenActual = PALABRAS_TOKEN[a.campo][0];
-  }
-
-  automatasTokenActuales[a.tipo] = a;
-
-  const destino = document.getElementById(id);
-
-  if (!destino) return;
-
-  if (a.tipo === "AFND") {
-    const controles = html("div", "", "selector-lexema-token");
-
-    const titulo = html("label", "Lexema para visualizar: ");
-
-    const selector = html("select");
-
-    for (const palabra of PALABRAS_TOKEN[a.campo]) {
-      const opcion = html("option", palabra);
-      opcion.value = palabra;
-      selector.appendChild(opcion);
-    }
-
-    selector.value = palabraTokenActual;
-
-    selector.addEventListener("change", () => {
-      palabraTokenActual = selector.value;
-      actualizarRutaToken();
-    });
-
-    titulo.appendChild(selector);
-    controles.appendChild(titulo);
-    destino.replaceChildren(controles);
-  }
-
-  actualizarRutaToken();
+  return dibujarAutomataAnterior(a, id);
 };
 
 const cargarCampoAutomatasAnterior = cargarCampoAutomatas;
