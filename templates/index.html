@@ -280,28 +280,28 @@ PUESTO: Asistente administrativo
           elementos concretos reconocidos.
         </p>
 
-        <div class="tabla-contenedor">
+        <div class="tabla-contenedor tabla-tokens-formal">
           <table>
             <thead>
               <tr>
-                <th>Token agrupador</th>
-                <th>Lexemas permitidos</th>
-                <th>Función</th>
-                <th>Apariciones</th>
-                <th>Lexemas encontrados</th>
+                <th rowspan="2">Token agrupador</th>
+                <th rowspan="2">Lexemas permitidos</th>
+                <th colspan="3">Expresiones regulares</th>
+              </tr>
+              <tr>
+                <th>Notación Regex</th>
+                <th>Lenguaje</th>
+                <th>Notación por conjuntos</th>
               </tr>
             </thead>
             <tbody>
               {% for grupo in tokens_agrupados %}
               <tr>
                 <td><code>{{ grupo.token }}</code></td>
-                <td>{{ grupo.definicion }}</td>
-                <td>{{ grupo.funcion }}</td>
-                <td>{{ grupo.cantidad }}</td>
-                <td>
-                  {% if grupo.lexemas %} {{ grupo.lexemas|join(', ') }} {% else
-                  %} — {% endif %}
-                </td>
+                <td>{{ grupo.lexemas }}</td>
+                <td><code>{{ grupo.regex }}</code></td>
+                <td><code>{{ grupo.lenguaje }}</code></td>
+                <td><code>{{ grupo.conjuntos }}</code></td>
               </tr>
               {% endfor %}
             </tbody>
