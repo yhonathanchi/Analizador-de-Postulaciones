@@ -504,7 +504,7 @@ function vistaCorreoCompacta(a, id, grupos, nombres) {
 
     if (!p || !q) continue;
 
-    const et = nombres.get(g);
+    const et = etiquetaCampoCompacta(a.campo, g, nombres);
 
     if (g.origen === g.destino) {
       flecha(
@@ -552,6 +552,18 @@ function vistaCorreoCompacta(a, id, grupos, nombres) {
     ocultoSumidero: Boolean(sumidero),
     correoCompacto: true,
   };
+}
+
+function etiquetaCampoCompacta(campo, grupo, nombres) {
+  if (campo === "NOMBRE") {
+    return "L, espacio";
+  }
+
+  if (campo === "INSTITUCION" || campo === "PUESTO") {
+    return "L, D, espacio, ., ,";
+  }
+
+  return nombres.get(grupo);
 }
 
 function vistaCampoCompacta(a, id, grupos, nombres) {
@@ -1243,9 +1255,15 @@ function dibujarAutomata(a, id) {
     (a.campo === "NOMBRE" || a.campo === "INSTITUCION" || a.campo === "PUESTO") &&
     dibujo.ocultoSumidero
   ) {
-    nota =
-      "Vista compacta del patrón: se muestran las transiciones útiles de aceptación. " +
-      "El estado sumidero del AFD se mantiene en la tabla completa.";
+    if (a.campo === "NOMBRE") {
+      nota =
+        "L = letras A-Z, a-z y letras acentuadas. El espacio también es válido. " +
+        "El estado sumidero del AFD se conserva en la tabla completa.";
+    } else {
+      nota =
+        "L = letras A-Z, a-z y letras acentuadas; D = dígitos 0-9. " +
+        "También se aceptan espacio, punto y coma. El sumidero del AFD queda en la tabla completa.";
+    }
   }
 
   if (a.campo === "CORREO") {
