@@ -68,7 +68,7 @@ function etiqueta(g, i) {
     g.simbolos.length === 10 &&
     contieneTodos(g.simbolos, DIGITOS)
   ) {
-    return DIGITOS.join(",");
+    return "0-9";
   }
 
   const partes = [];
@@ -440,6 +440,180 @@ function posiciones(a) {
   );
 }
 
+
+
+function vistaCampoCompacta(a, id, grupos, nombres) {
+  const sumidero = sumideroDe(a);
+  const visibles = grupos.filter(
+    (g) => g.origen !== sumidero && g.destino !== sumidero,
+  );
+
+  const d = marco(id, 700, 300);
+
+  const estados = [...a.estados]
+    .filter((estado) => estado !== sumidero)
+    .sort(ordenar);
+
+  const pos = new Map();
+
+  if (a.tipo === "AFND") {
+    const orden = estados.slice(0, 3);
+    orden.forEach((estado, i) => {
+      pos.set(estado, { x: 115 + i * 220, y: 145 });
+    });
+  } else {
+    const orden = estados.slice(0, 2);
+    orden.forEach((estado, i) => {
+      pos.set(estado, { x: 180 + i * 330, y: 145 });
+    });
+  }
+
+  const inicio = pos.get(a.inicial);
+
+  if (inicio) {
+    flecha(d, id, `M${inicio.x - 72} ${inicio.y} L${inicio.x - 36} ${inicio.y}`);
+    texto(d, inicio.x - 55, inicio.y - 18, "inicio", 12);
+  }
+
+  for (const g of visibles) {
+    const p = pos.get(g.origen);
+    const q = pos.get(g.destino);
+    if (!p || !q) continue;
+
+    const et = nombres.get(g);
+
+    if (g.origen === g.destino) {
+      flecha(
+        d,
+        id,
+        `M${p.x - 20} ${p.y - 25} C${p.x - 85} ${p.y - 105}, ${p.x + 85} ${p.y - 105}, ${p.x + 20} ${p.y - 25}`,
+      );
+      texto(d, p.x, p.y - 88, et, 12);
+      continue;
+    }
+
+    const dx = q.x - p.x;
+    const dy = q.y - p.y;
+    const l = Math.hypot(dx, dy);
+    const ux = dx / l;
+    const uy = dy / l;
+
+    const x1 = p.x + ux * 36;
+    const y1 = p.y + uy * 36;
+    const x2 = q.x - ux * 38;
+    const y2 = q.y - uy * 38;
+
+    flecha(
+      d,
+      id,
+      `M${x1} ${y1} L${x2} ${y2}`,
+      "normal",
+      g.simbolos.includes("ε"),
+    );
+    texto(d, (x1 + x2) / 2, (y1 + y2) / 2 - 18, et, 12);
+  }
+
+  for (const estado of estados) {
+    const p = pos.get(estado);
+    if (p) nodo(d, estado, p, a, false);
+  }
+
+  return {
+    d,
+    dibujados: visibles,
+    ocultoSumidero: Boolean(sumidero),
+  };
+}
+
+function vistaTokenPorLexemas(a, id, grupos, nombres) {
+  const palabras = PALABRAS_TOKEN[a.campo] || [];
+  const rutas = palabras
+    .map((palabra) => ({ palabra, camino: rutaAceptadaToken(a, palabra) }))
+    .filter((item) => item.camino);
+
+  const ancho = Math.max(
+    820,
+    210 + Math.max(...rutas.map((r) => r.camino.length), 1) * 82,
+  );
+  const alto = Math.max(280, 95 + rutas.length * 92);
+  const d = marco(id, ancho, alto);
+  const dibujados = [];
+
+  rutas.forEach((item, fila) => {
+    const y = 70 + fila * 88;
+    texto(d, 78, y + 5, item.palabra, 11);
+
+    const camino = item.camino;
+    const paso = Math.min(
+      88,
+      (ancho - 210) / Math.max(camino.length - 1, 1),
+    );
+
+    for (let i = 0; i < camino.length; i++) {
+      const estado = camino[i].estado;
+      const x = 165 + i * paso;
+      const final = a.finales.includes(estado);
+      const inicial = i === 0;
+
+      if (i > 0) {
+        const anterior = camino[i - 1];
+        const xPrev = 165 + (i - 1) * paso;
+        const letra = camino[i].letra;
+
+        flecha(
+          d,
+          id,
+          `M${xPrev + 27} ${y} L${x - 29} ${y}`,
+          "normal",
+          letra === "ε",
+        );
+        texto(d, (xPrev + x) / 2, y - 16, letra, 11);
+
+        const grupo = grupos.find(
+          (g) =>
+            g.origen === anterior.estado &&
+            g.destino === estado &&
+            g.simbolos.includes(letra),
+        );
+
+        if (grupo && !dibujados.includes(grupo)) dibujados.push(grupo);
+      }
+
+      d.appendChild(
+        svg("circle", {
+          cx: x,
+          cy: y,
+          r: 25,
+          fill: final ? "#e8f7f0" : inicial ? "#e9f8f3" : "#eef4fa",
+          stroke: final || inicial ? "#15966f" : "#315b7d",
+          "stroke-width": 2,
+        }),
+      );
+
+      if (final) {
+        d.appendChild(
+          svg("circle", {
+            cx: x,
+            cy: y,
+            r: 20,
+            fill: "none",
+            stroke: "#15966f",
+            "stroke-width": 2,
+          }),
+        );
+      }
+
+      texto(d, x, y + 5, estado, 11);
+    }
+  });
+
+  return {
+    d,
+    dibujados,
+    ocultoSumidero: Boolean(sumideroDe(a)),
+    recorridos: true,
+  };
+}
 
 function vistaTokenLegible(a, id, grupos, nombres) {
   const sumidero = sumideroDe(a);
@@ -909,15 +1083,21 @@ function dibujarAutomata(a, id) {
   const completo =
     a.campo === "CORREO" && a.tipo === "AFD" && a.estados.length === 8;
 
-  const tokenGrande =
-    (a.campo === "TK_SECCION" || a.campo === "TK_CAMPO") &&
-    a.estados.length > 8;
+  const tokenPalabras =
+    a.campo === "TK_SECCION" || a.campo === "TK_CAMPO";
 
-  const dibujo = completo
-    ? vistaCorreoAFD(a, id, grupos, nombres)
-    : tokenGrande
-      ? vistaTokenLegible(a, id, grupos, nombres)
-      : vistaBasica(a, id, grupos, nombres);
+  const campoTexto =
+    a.campo === "NOMBRE" ||
+    a.campo === "INSTITUCION" ||
+    a.campo === "PUESTO";
+
+  const dibujo = tokenPalabras
+    ? vistaTokenPorLexemas(a, id, grupos, nombres)
+    : campoTexto
+      ? vistaCampoCompacta(a, id, grupos, nombres)
+      : completo
+        ? vistaBasica(a, id, grupos, nombres)
+        : vistaBasica(a, id, grupos, nombres);
 
   const lienzo = html(
     "div",
@@ -940,11 +1120,20 @@ function dibujarAutomata(a, id) {
 
   if (
     (a.campo === "TK_SECCION" || a.campo === "TK_CAMPO") &&
+    dibujo.recorridos
+  ) {
+    nota =
+      "Vista por lexemas aceptados, organizada como los ejemplos del profesor. " +
+      "La tabla inferior conserva todas las transiciones del autómata, incluido el sumidero del AFD.";
+  }
+
+  if (
+    (a.campo === "NOMBRE" || a.campo === "INSTITUCION" || a.campo === "PUESTO") &&
     dibujo.ocultoSumidero
   ) {
     nota =
-      "Vista legible tipo JFLAP: se muestran las rutas que pueden llegar a aceptación. " +
-      "El estado sumidero y las transiciones de rechazo se conservan en la tabla completa.";
+      "Vista compacta del patrón: se muestran las transiciones útiles de aceptación. " +
+      "El estado sumidero del AFD se mantiene en la tabla completa.";
   }
 
   if (a.campo === "CORREO" && a.tipo === "AFND") {
@@ -1099,11 +1288,7 @@ async function cargarCampoAutomatas(campo) {
     }
 
     dibujarAutomata(afnd, "grafico-afnd");
-    if (campo === "CORREO") {
-      visualizarAFDCorreoInteractivo(afd);
-    } else {
-      dibujarAutomata(afd, "grafico-afd");
-    }
+    dibujarAutomata(afd, "grafico-afd");
 
     mostrarQuintupla(afnd, "quintupla-afnd");
 
